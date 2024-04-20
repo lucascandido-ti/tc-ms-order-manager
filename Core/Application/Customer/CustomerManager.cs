@@ -73,7 +73,7 @@ namespace Application.Customer
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.CUSTOMER_NOT_FOUND,
-                    Message = "No custoemr record was found with the given Id"
+                    Message = "No customer record was found with the given Id"
                 };
             }
 
