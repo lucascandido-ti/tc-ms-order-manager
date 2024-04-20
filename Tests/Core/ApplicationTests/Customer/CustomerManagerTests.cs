@@ -6,6 +6,7 @@ using Application.Customer.Requests;
 using Domain.Customer.Ports;
 using Moq;
 using Domain.Utils;
+using Application.Customer.Ports;
 
 namespace ApplicationTests.Customer
 {
@@ -141,6 +142,55 @@ namespace ApplicationTests.Customer
 
             Assert.AreEqual(res.ErrorCode, ErrorCodes.CUSTOMER_CPF_REQUIRED);
             Assert.AreEqual(res.Message, "CPF is a required information");
+        }
+
+        [Test]
+        public async Task ShouldReturnCustomerNotFoundWhenCustomerDoesntExist()
+        {
+            var fakeRepo = new Mock<ICustomerRepository>();
+
+            var fakeGuest = new Entities.Customer
+            {
+                Id = 333,
+                Name = "Test"
+            };
+
+            fakeRepo.Setup(x => x.Get(333)).Returns(Task.FromResult<Entities.Customer?>(null));
+
+            customerManager = new CustomerManager(fakeRepo.Object);
+
+            var res = await customerManager.GetCustomer(333);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.CUSTOMER_NOT_FOUND);
+            Assert.AreEqual(res.Message, "No customer record was found with the given Id");
+
+        }
+
+        [Test]
+        public async Task ShouldReturnCustomerSuccess()
+        {
+            var fakeRepo = new Mock<ICustomerRepository>();
+
+            var fakeCustomer = new Entities.Customer
+            {
+                Id = 333,
+                Name = "Fulano",
+                Email = "email@email.com",
+                Cpf = "549.714.950-29"
+            };
+
+            fakeRepo.Setup(x => x.Get(333)).Returns(Task.FromResult((Entities.Customer?)fakeCustomer));
+
+            customerManager = new CustomerManager(fakeRepo.Object);
+
+            var res = await customerManager.GetCustomer(333);
+
+            Assert.IsNotNull(res);
+            Assert.True(res.Success);
+            Assert.AreEqual(res.Data.Id, fakeCustomer.Id);
+            Assert.AreEqual(res.Data.Name, fakeCustomer.Name);
         }
 
     }
