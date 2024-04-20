@@ -50,5 +50,5 @@ jobs:
           name: build-artifact
           path: out/
 
-      - name: Test
+      - name: Test Module Core/Application
         run: dotnet test ./Tests/Core/ApplicationTests/
