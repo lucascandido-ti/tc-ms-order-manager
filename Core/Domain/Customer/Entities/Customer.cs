@@ -1,5 +1,6 @@
 ﻿using Domain.Customer.Exceptions;
 using Domain.Customer.Ports;
+using Domain.Utils;
 
 namespace Domain.Entities
 {
@@ -24,12 +25,12 @@ namespace Domain.Entities
                 throw new NameRequiredException();
             }
 
-            if (this.Email == null)
+            if (Utils.Utils.ValidateEmail(Email) == false)
             {
                 throw new EmailRequiredException();
             }
 
-            if (this.Cpf == null)
+            if (Utils.Utils.ValidateCPF(Cpf) == false)
             {
                 throw new CpfRequiredException();
             }

@@ -5,6 +5,7 @@ using Application.Customer.Dto;
 using Application.Customer.Requests;
 using Domain.Customer.Ports;
 using Moq;
+using Domain.Utils;
 
 namespace ApplicationTests.Customer
 {
@@ -16,8 +17,8 @@ namespace ApplicationTests.Customer
             {
                 Id = 111,
                 Name = "Fulano",
-                Email = "Silva",
-                Cpf = "123.456.789-00"
+                Email = "email@email.com",
+                Cpf = "549.714.950-29"
             };
 
             var customerEntities = CustomerDTO.MapToEntity(customerDTO);
@@ -49,8 +50,8 @@ namespace ApplicationTests.Customer
             var customerDTO = new CustomerDTO
             {
                 Name = "Fulano",
-                Email = "Silva",
-                Cpf = "123.456.789-00"
+                Email = "email@email.com",
+                Cpf = "549.714.950-29"
             };
 
             var request = new CreateCustomerRequest()
@@ -73,5 +74,74 @@ namespace ApplicationTests.Customer
             Assert.IsNotNull(res);
             Assert.True(res.Success);
         }
+
+
+        [TestCase("invalid")]
+        public async Task ShouldReturnInvalidEmailPassed(string email)
+        {
+            var customerDTO = new CustomerDTO
+            {
+                Name = "Fulano",
+                Email = email,
+                Cpf = "549.714.950-29"
+            };
+
+            var request = new CreateCustomerRequest()
+            {
+                Data = customerDTO
+            };
+
+            var fakeRepo = new Mock<ICustomerRepository>();
+
+
+            var expectEntity = CustomerDTO.MapToEntity(customerDTO);
+            expectEntity.Id = 111;
+
+            fakeRepo.Setup(x => x.CreateCustomer(It.IsAny<Entities.Customer>()))
+                    .Returns(Task.FromResult(expectEntity));
+
+            customerManager = new CustomerManager(fakeRepo.Object);
+
+            var res = await customerManager.CreateCustomer(request);
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.CUSTOMER_EMAIL_REQUIRED);
+            Assert.AreEqual(res.Message, "Email is a required information");
+        }
+
+        [TestCase("123.456.789-00")]
+        public async Task ShouldReturnInvalidCPFPassed(string cpf)
+        {
+            var customerDTO = new CustomerDTO
+            {
+                Name = "Fulano",
+                Email = "email@email.com",
+                Cpf = cpf
+            };
+
+            var request = new CreateCustomerRequest()
+            {
+                Data = customerDTO
+            };
+
+            var fakeRepo = new Mock<ICustomerRepository>();
+
+            var expectEntity = CustomerDTO.MapToEntity(customerDTO);
+            expectEntity.Id = 111;
+
+            fakeRepo.Setup(x => x.CreateCustomer(It.IsAny<Entities.Customer>()))
+                    .Returns(Task.FromResult(expectEntity));
+
+            customerManager = new CustomerManager(fakeRepo.Object);
+
+            var res = await customerManager.CreateCustomer(request);
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.CUSTOMER_CPF_REQUIRED);
+            Assert.AreEqual(res.Message, "CPF is a required information");
+        }
+
     }
 }
