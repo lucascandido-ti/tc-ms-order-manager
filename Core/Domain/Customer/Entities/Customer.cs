@@ -6,7 +6,8 @@ namespace Domain.Entities
     public class Customer
     {
         public Customer() { 
-            this.CreatedAt = DateTime.Now;
+            this.CreatedAt = DateTime.UtcNow;
+            this.LastUpdatedAt = DateTime.UtcNow;
         }
 
         public int Id { get; set; }

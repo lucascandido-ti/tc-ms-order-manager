@@ -24,7 +24,6 @@ namespace Application.Customer
             {
                 var customer = CustomerDTO.MapToEntity(request.Data);
 
-
                 await customer.Save(_customerRepository);
 
                 request.Data.Id = customer.Id;
