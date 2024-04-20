@@ -1,7 +1,11 @@
+using Application.Category;
+using Application.Category.Ports;
 using Application.Customer;
 using Application.Customer.Ports;
 using Data;
+using Data.Category;
 using Data.Customer;
+using Domain.Category.Ports;
 using Domain.Customer.Ports;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CustomerManager).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CategoryManager).Assembly));
 
 # region IoC
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICategoryManager, CategoryManager>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 # endregion
 
 # region DB wiring up
