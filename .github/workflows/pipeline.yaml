@@ -22,7 +22,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore --output out/
         # Save the build artifacts for the test job
         # In this case we are assuming all build outputs are in the 'out' directory
       - name: Upload build artifact
