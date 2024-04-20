@@ -42,7 +42,7 @@ namespace Domain.Entities
 
             if (this.Id == 0)
             {
-                var result = await customerRepository.CreateBooking(this);
+                var result = await customerRepository.CreateCustomer(this);
                 this.Id = result.Id;
             }
         }

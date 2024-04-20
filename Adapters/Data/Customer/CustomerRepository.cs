@@ -13,7 +13,7 @@ namespace Data.Customer
             this._dbContext = dbContext;
         }
 
-        public async Task<Entities.Customer> CreateBooking(Entities.Customer customer)
+        public async Task<Entities.Customer> CreateCustomer(Entities.Customer customer)
         {
             _dbContext.Customers.Add(customer);
             await _dbContext.SaveChangesAsync();
