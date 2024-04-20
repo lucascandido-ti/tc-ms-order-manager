@@ -52,5 +52,15 @@ namespace API.Controllers
             _logger.LogError("Response with unknown ErrorCode Returned", res);
             return BadRequest(500);
         }
+
+        [HttpGet]
+        public async Task<ActionResult<CustomerDTO>> Get(int customerId)
+        {
+            var res = await _customerManager.GetCustomer(customerId);
+
+            if (res.Success) return Created("", res.Data);
+
+            return NotFound(res);
+        }
     }
 }

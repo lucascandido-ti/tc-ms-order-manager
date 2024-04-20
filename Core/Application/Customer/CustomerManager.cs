@@ -63,9 +63,27 @@ namespace Application.Customer
             }
         }
 
-        public Task<CustomerResponse> GetCustomer(int id)
+        public async Task<CustomerResponse> GetCustomer(int id)
         {
-            throw new NotImplementedException();
+            var customer = await _customerRepository.Get(id);
+
+            if(customer == null)
+            {
+                return new CustomerResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.CUSTOMER_NOT_FOUND,
+                    Message = "No custoemr record was found with the given Id"
+                };
+            }
+
+            var customerDto = CustomerDTO.MapToDTO(customer);
+
+            return new CustomerResponse
+            {
+                Success = true,
+                Data = customerDto
+            };
         }
     }
 }

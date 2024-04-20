@@ -20,9 +20,10 @@ namespace Data.Customer
             return customer;
         }
 
-        public Task<Entities.Customer> Get(int id)
+        public async Task<Entities.Customer> Get(int id)
         {
-            throw new NotImplementedException();
+            var customer = await _dbContext.Customers.FindAsync(id);
+            return customer;
         }
 
         public Task<List<Entities.Customer>> List()
