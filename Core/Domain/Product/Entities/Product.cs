@@ -1,6 +1,6 @@
-﻿using Domain.Customer.Ports;
-using Domain.Product.Exceptions;
+﻿using Domain.Product.Exceptions;
 using Domain.Product.Ports;
+using Domain.Product.ValueObjects;
 
 namespace Domain.Entities
 {
@@ -14,7 +14,8 @@ namespace Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public float Price { get; set; }
+        public Price Price { get; set; }
+        public ICollection<Category> Categories { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
 
@@ -25,7 +26,7 @@ namespace Domain.Entities
                 throw new ProductNameRequiredException();
             }
 
-            if(this.Price == null)
+            if (this.Price == null || this.Price.Value < 1)
             {
                 throw new ProductPriceRequiredException();
             }
