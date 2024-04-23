@@ -55,5 +55,15 @@ namespace API.Controllers
             _logger.LogError("Response with unknown ErrorCode Returned", res);
             return BadRequest(500);
         }
+
+        [HttpGet]
+        public async Task<ActionResult<CategoryDTO>> Get(int categoryId)
+        {
+            var res = await _categoryManager.GetCategory(categoryId);
+
+            if (res.Success) return Created("", res.Data);
+
+            return NotFound(res);
+        }
     }
 }

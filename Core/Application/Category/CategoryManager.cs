@@ -2,6 +2,8 @@
 using Application.Category.Ports;
 using Application.Category.Requests;
 using Application.Category.Responses;
+using Application.Customer.Dto;
+using Application.Customer.Responses;
 using Domain.Category.Exceptions;
 using Domain.Category.Ports;
 using Domain.Utils;
@@ -53,9 +55,27 @@ namespace Application.Category
             }
         }
 
-        public Task<CategoryResponse> GetCategory(int id)
+        public async Task<CategoryResponse> GetCategory(int id)
         {
-            throw new NotImplementedException();
+            var category = await _categoryRepository.Get(id);
+
+            if (category == null)
+            {
+                return new CategoryResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.CATEGORY_NOT_FOUND,
+                    Message = "No category record was found with the given Id"
+                };
+            }
+
+            var categoryDto = CategoryDTO.MapToDTO(category);
+
+            return new CategoryResponse
+            {
+                Success = true,
+                Data = categoryDto
+            };
         }
     }
 }

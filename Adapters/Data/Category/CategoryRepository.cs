@@ -21,9 +21,10 @@ namespace Data.Category
             return category;
         }
 
-        public Task<Entities.Category> Get(int id)
+        public async Task<Entities.Category> Get(int id)
         {
-            throw new NotImplementedException();
+            var category = await _dbContext.Categories.FindAsync(id);
+            return category;
         }
 
         public Task<List<Entities.Category>> List()
