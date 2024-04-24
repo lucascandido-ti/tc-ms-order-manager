@@ -1,7 +1,6 @@
 ﻿using Entities = Domain.Entities;
 
 using Domain.Category.Ports;
-using Domain.Entities;
 
 namespace Data.Category
 {

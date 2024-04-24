@@ -4,9 +4,18 @@ namespace Data.Product
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<Domain.Entities.Product> CreateProduct(Domain.Entities.Product product)
+        private readonly DataDbContext _dbContext;
+
+        public ProductRepository(DataDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+
+        public async Task<Domain.Entities.Product> CreateProduct(Domain.Entities.Product product)
+        {
+            _dbContext.Products.Add(product);
+            await _dbContext.SaveChangesAsync();
+            return product;
         }
 
         public Task<Domain.Entities.Product> Get(int id)
