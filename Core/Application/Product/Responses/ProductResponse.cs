@@ -5,6 +5,6 @@ namespace Application.Product.Responses
 {
     public class ProductResponse: Response
     {
-        public ProductDTO data;
+        public ProductDTO Data;
     }
 }

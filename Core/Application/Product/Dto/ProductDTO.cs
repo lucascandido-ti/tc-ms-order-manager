@@ -9,6 +9,7 @@ namespace Application.Product.Dto
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public List<int> categoryIds { get; set; }
         public decimal Price { get; set; }
         public AcceptedCurrencies Currency { get; set; }
 
@@ -20,6 +21,7 @@ namespace Application.Product.Dto
                 Name = dto.Name,
                 Description = dto.Description,
                 Price = new ValueObjects.Price { Currency = dto.Currency, Value = dto.Price },
+                Categories = new List<Entities.Category>()
             };
         }
 

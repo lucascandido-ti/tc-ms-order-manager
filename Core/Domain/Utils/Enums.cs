@@ -2,8 +2,8 @@
 {
     public enum AcceptedCurrencies
     {
+        Real,
         Dollar,
-        Euro,
-        Bitcoin
+        Euro
     }
 }
