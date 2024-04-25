@@ -23,9 +23,9 @@ namespace ApplicationTests.Category
                 Description = "Drinques e Bebidas em geral"
             };
 
-            var productEntity = CategoryDTO.MapToEntity(categoryDTO);
+            var categoryEntity = CategoryDTO.MapToEntity(categoryDTO);
 
-            return Task.FromResult(productEntity);
+            return Task.FromResult(categoryEntity);
         }
 
         public Task<Entities.Category> Get(int id)
