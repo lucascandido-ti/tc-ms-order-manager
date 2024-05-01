@@ -6,7 +6,6 @@ using Application.Customer.Requests;
 using Domain.Customer.Ports;
 using Moq;
 using Domain.Utils;
-using Application.Customer.Ports;
 
 namespace ApplicationTests.Customer
 {
@@ -29,12 +28,32 @@ namespace ApplicationTests.Customer
 
         public Task<Entities.Customer> Get(int id)
         {
-            throw new NotImplementedException();
+            var customerDTO = new CustomerDTO
+            {
+                Id = 111,
+                Name = "Fulano",
+                Email = "email@email.com",
+                Cpf = "549.714.950-29"
+            };
+
+            var customerEntities = CustomerDTO.MapToEntity(customerDTO);
+
+            return Task.FromResult(customerEntities);
         }
 
         public Task<List<Entities.Customer>> List()
         {
-            throw new NotImplementedException();
+            var customerDTO = new CustomerDTO
+            {
+                Id = 111,
+                Name = "Fulano",
+                Email = "email@email.com",
+                Cpf = "549.714.950-29"
+            };
+
+            var customerEntities = CustomerDTO.MapToEntity(customerDTO);
+
+            return Task.FromResult(new List<Entities.Customer> { customerEntities });
         }
     }
     public class Tests
@@ -191,6 +210,40 @@ namespace ApplicationTests.Customer
             Assert.True(res.Success);
             Assert.AreEqual(res.Data.Id, fakeCustomer.Id);
             Assert.AreEqual(res.Data.Name, fakeCustomer.Name);
+        }
+
+        [Test]
+        public async Task ShouldReturnListOfCustomers()
+        {
+            var fakeRepo = new Mock<ICustomerRepository>();
+
+            var fakeCustomers = new List<Entities.Customer>
+            {
+                new Entities.Customer {
+                    Id = 333,
+                    Name = "Fulano",
+                    Email = "email@email.com",
+                    Cpf = "549.714.950-29"
+                }
+            };
+
+            fakeRepo.Setup(x => x.List()).Returns(Task.FromResult<List<Entities.Customer>>(fakeCustomers));
+
+            customerManager = new CustomerManager(fakeRepo.Object);
+
+            var res = await customerManager.GetCustomers();
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(fakeCustomers.Count, res.Count());
+
+            for (int i = 0; i < fakeCustomers.Count; i++)
+            {
+                Assert.AreEqual(fakeCustomers[i].Id, res.ElementAt(i).Id);
+                Assert.AreEqual(fakeCustomers[i].Name, res.ElementAt(i).Name);
+                Assert.AreEqual(fakeCustomers[i].Email, res.ElementAt(i).Email);
+                Assert.AreEqual(fakeCustomers[i].Cpf, res.ElementAt(i).Cpf);
+            }
+
         }
 
     }
