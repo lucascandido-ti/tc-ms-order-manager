@@ -30,12 +30,30 @@ namespace ApplicationTests.Category
 
         public Task<Entities.Category> Get(int id)
         {
-            throw new NotImplementedException();
+            var categoryDTO = new CategoryDTO
+            {
+                Id = 111,
+                Name = "Bebida",
+                Description = "Drinques e Bebidas em geral"
+            };
+
+            var categoryEntity = CategoryDTO.MapToEntity(categoryDTO);
+
+            return Task.FromResult(categoryEntity);
         }
 
         public Task<List<Entities.Category>> List()
         {
-            throw new NotImplementedException();
+            var categoryDTO = new CategoryDTO
+            {
+                Id = 111,
+                Name = "Bebida",
+                Description = "Drinques e Bebidas em geral"
+            };
+
+            var categoryEntity = CategoryDTO.MapToEntity(categoryDTO);
+
+            return Task.FromResult(new List<Entities.Category> { categoryEntity });
         }
     }
 
@@ -124,6 +142,35 @@ namespace ApplicationTests.Category
             Assert.AreEqual(res.Data.Id, fakeCategory.Id);
             Assert.AreEqual(res.Data.Name, fakeCategory.Name);
             Assert.AreEqual(res.Data.Description, fakeCategory.Description);
+        }
+
+        [Test]
+        public async Task ShouldReturnListOfCategories()
+        {
+            var fakeRepo = new Mock<ICategoryRepository>();
+
+            var fakeCategories = new List<Entities.Category>
+            {
+                new Entities.Category { Id = 1, Name = "Category1", Description = "Description1" },
+                new Entities.Category { Id = 2, Name = "Category2", Description = "Description2" },
+                new Entities.Category { Id = 3, Name = "Category3", Description = "Description3" }
+            };
+
+            fakeRepo.Setup(x => x.List()).Returns(Task.FromResult<List<Entities.Category>>(fakeCategories));
+
+            var categoryManager = new CategoryManager(fakeRepo.Object);
+
+            var res = await categoryManager.GetCategories();
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(fakeCategories.Count, res.Count());
+
+            for (int i = 0; i < fakeCategories.Count; i++)
+            {
+                Assert.AreEqual(fakeCategories[i].Id, res.ElementAt(i).Id);
+                Assert.AreEqual(fakeCategories[i].Name, res.ElementAt(i).Name);
+                Assert.AreEqual(fakeCategories[i].Description, res.ElementAt(i).Description);
+            }
         }
     }
 }
