@@ -1,6 +1,7 @@
 ﻿using Entities = Domain.Entities;
 
 using Domain.Category.Ports;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Category
 {
@@ -26,9 +27,10 @@ namespace Data.Category
             return category;
         }
 
-        public Task<List<Entities.Category>> List()
+        public async Task<List<Entities.Category>> List()
         {
-            throw new NotImplementedException();
+            var categories = await _dbContext.Categories.ToListAsync();
+            return categories;
         }
     }
 }

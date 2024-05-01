@@ -1,8 +1,6 @@
 ﻿using Application.Category.Command;
 using Application.Category.Dto;
 using Application.Category.Ports;
-using Application.Customer.Commands;
-using Application.Customer.Dto;
 using Domain.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

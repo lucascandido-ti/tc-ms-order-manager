@@ -1,4 +1,5 @@
 ﻿using Domain.Customer.Ports;
+using Microsoft.EntityFrameworkCore;
 using Entities = Domain.Entities;
 
 namespace Data.Customer
@@ -26,9 +27,10 @@ namespace Data.Customer
             return customer;
         }
 
-        public Task<List<Entities.Customer>> List()
+        public async Task<List<Entities.Customer>> List()
         {
-            throw new NotImplementedException();
+            var customers = await _dbContext.Customers.ToListAsync();
+            return customers;
         }
     }
 }
