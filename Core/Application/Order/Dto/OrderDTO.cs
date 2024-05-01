@@ -12,7 +12,7 @@ namespace Application.Order.Dto
         public decimal Price { get; set; }
         public AcceptedCurrencies Currency { get; set; }
         public int Invoice { get; set; }
-        public OrderStatus status { get; set; }
+        public OrderStatus Status { get; set; }
         public List<ProductDTO> Products { get; set; }
 
         public static Entities.Order MapToEntity(OrderDTO dto)
@@ -29,7 +29,7 @@ namespace Application.Order.Dto
                 Id = dto.Id,
                 Invoice = dto.Invoice,
                 Price = new Price { Currency = dto.Currency, Value = dto.Price },
-                status = dto.status,
+                Status = dto.Status,
                 Products = productEntity
             };
         }
@@ -50,7 +50,7 @@ namespace Application.Order.Dto
                 Price = order.Price.Value,
                 Currency = order.Price.Currency,
                 Products = productsDto,
-                status = order.status
+                Status = order.Status
             };
 
             return orderDto;

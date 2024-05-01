@@ -1,7 +1,22 @@
-﻿namespace Domain.Utils
+﻿using System.Security.Cryptography;
+
+namespace Domain.Utils
 {
     public static class Utils
     {
+        public static string GenerateHash(int byteSize)
+        {
+            byte[] randomBytes = new byte[byteSize]; // Tamanho do hash em bytes
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+            }
+
+            string hash = BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
+
+            return hash;
+        }
+
         public static bool ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
