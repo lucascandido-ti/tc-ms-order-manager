@@ -2,7 +2,7 @@
 using Domain.Utils.Enums;
 using System.Text.Json.Serialization;
 using Entities = Domain.Entities;
-using ValueObjects = Domain.Product.ValueObjects;
+using ValueObjects = Domain.Utils.ValueObjects;
 
 namespace Application.Product.Dto
 {
@@ -19,13 +19,20 @@ namespace Application.Product.Dto
 
         public static Entities.Product MapToEntity(ProductDTO dto)
         {
+            var categoryEntities = new List<Entities.Category>();
+
+            foreach(var category in dto.Categories)
+            {
+                categoryEntities.Add(CategoryDTO.MapToEntity(category));
+            }
+
             return new Entities.Product
             {
                 Id = dto.Id,
                 Name = dto.Name,
                 Description = dto.Description,
                 Price = new ValueObjects.Price { Currency = dto.Currency, Value = dto.Price },
-                Categories = new List<Entities.Category>()
+                Categories = categoryEntities
             };
         }
 

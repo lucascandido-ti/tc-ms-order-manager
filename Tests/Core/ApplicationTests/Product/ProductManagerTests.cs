@@ -6,7 +6,7 @@ using Domain.Category.Ports;
 using Domain.Product.Ports;
 using Entities = Domain.Entities;
 using Moq;
-using ValueObjects = Domain.Product.ValueObjects;
+using Domain.Utils.ValueObjects;
 using Domain.Utils.Enums;
 using Application.Product.Queries;
 using Domain.Utils;
@@ -198,7 +198,7 @@ namespace ApplicationTests.Product
                 Id = 333,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
-                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
+                Price = new Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
                 Categories = new List<Entities.Category>()
                 {
                     CategoryDTO.MapToEntity(new CategoryDTO
@@ -240,7 +240,7 @@ namespace ApplicationTests.Product
                 Id = 333,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
-                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m }
+                Price = new Price { Currency = AcceptedCurrencies.Real, Value = 12.99m }
 
             };
 
@@ -276,7 +276,7 @@ namespace ApplicationTests.Product
                 Id = 333,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
-                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
+                Price = new Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
                 Categories = new List<Entities.Category>()
                 {
                     CategoryDTO.MapToEntity(new CategoryDTO
@@ -334,7 +334,14 @@ namespace ApplicationTests.Product
                     Name = "Product"+i,
                     Description = "Description"+i,
                     Price = 12.99m,
-                    Currency = 0
+                    Currency = 0,
+                    Categories = new List<CategoryDTO>() {
+                        new CategoryDTO {
+                            Id = 111,
+                            Name = "Category",
+                            Description = "Description"
+                        }
+                    }
                 }));
             }
 

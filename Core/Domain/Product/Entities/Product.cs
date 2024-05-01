@@ -1,6 +1,6 @@
 ﻿using Domain.Product.Exceptions;
 using Domain.Product.Ports;
-using Domain.Product.ValueObjects;
+using Domain.Utils.ValueObjects;
 
 namespace Domain.Entities
 {
