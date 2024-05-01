@@ -6,6 +6,13 @@ using Domain.Category.Ports;
 using Domain.Product.Ports;
 using Entities = Domain.Entities;
 using Moq;
+using Application.Category;
+using ValueObjects = Domain.Product.ValueObjects;
+using Domain.Utils.Enums;
+using Application.Category.Queries;
+using Application.Product.Queries;
+using Domain.Product.ValueObjects;
+using System.Xml.Linq;
 
 namespace ApplicationTests.Product
 {
@@ -35,17 +42,68 @@ namespace ApplicationTests.Product
 
         public Task<Entities.Product> Get(int id)
         {
-            throw new NotImplementedException();
+            var productDTO = new ProductDTO
+            {
+                Id = 111,
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111
+                    }
+                },
+                Price = 12.99m,
+                Currency = 0
+            };
+
+            var productEntity = ProductDTO.MapToEntity(productDTO);
+
+            return Task.FromResult(productEntity);
         }
 
         public Task<Entities.Product> GetAggregate(int id)
         {
-            throw new NotImplementedException();
+            var productDTO = new ProductDTO
+            {
+                Id = 111,
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111
+                    }
+                },
+                Price = 12.99m,
+                Currency = 0
+            };
+
+            var productEntity = ProductDTO.MapToEntity(productDTO);
+
+            return Task.FromResult(productEntity);
         }
 
         public Task<List<Entities.Product>> List()
         {
-            throw new NotImplementedException();
+            var productDTO = new ProductDTO
+            {
+                Id = 111,
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111
+                    }
+                },
+                Price = 12.99m,
+                Currency = 0
+            };
+
+            var productEntity = ProductDTO.MapToEntity(productDTO);
+
+            return Task.FromResult(new List<Entities.Product> { productEntity });
         }
     }
 
@@ -130,6 +188,113 @@ namespace ApplicationTests.Product
             var res = await productManager.CreateProduct(request);
             Assert.IsNotNull(res);
             Assert.True(res.Success);
+        }
+
+        [Test]
+        public async Task ShouldReturnProductSuccess()
+        {
+            var fakeProductRepo = new Mock<IProductRepository>();
+            var fakeCategoryRepo = new Mock<ICategoryRepository>();
+
+            var productDTO = new ProductDTO
+            {
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Price = 12.99m,
+                Currency = 0,
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111,
+                        Name = "Bebida",
+                        Description = "Drinques e Bebidas em geral"
+                    }
+                }   
+            };
+
+            var fakeProduct = new Entities.Product
+            {
+                Id = 333,
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
+                Categories = new List<Entities.Category>()
+                {
+                    CategoryDTO.MapToEntity(new CategoryDTO
+                    {
+                        Id = 111,
+                        Name = "Bebida",
+                        Description = "Drinques e Bebidas em geral"
+                    })
+                }
+
+            };
+
+            fakeProductRepo.Setup(x => x.Get(333)).Returns(Task.FromResult((Entities.Product?)fakeProduct));
+
+            productManager = new ProductManager(fakeProductRepo.Object, fakeCategoryRepo.Object);
+
+            var query = new GetProductQuery
+            {
+                Id = 333
+            };
+
+            var res = await productManager.GetProduct(query);
+
+            Assert.IsNotNull(res);
+            Assert.True(res.Success);
+            Assert.AreEqual(res.Data.Id, fakeProduct.Id);
+            Assert.AreEqual(res.Data.Name, fakeProduct.Name);
+            Assert.AreEqual(res.Data.Description, fakeProduct.Description);
+            Assert.AreEqual(res.Data.Price, fakeProduct.Price.Value);
+
+            for (int i = 0; i < fakeProduct.Categories.Count; i++)
+            {
+                var fakeCategories = new List<Entities.Category>(fakeProduct.Categories);
+
+                Assert.AreEqual(fakeCategories[i].Id, res.Data.Categories.ElementAt(i).Id);
+                Assert.AreEqual(fakeCategories[i].Name, res.Data.Categories.ElementAt(i).Name);
+                Assert.AreEqual(fakeCategories[i].Description, res.Data.Categories.ElementAt(i).Description);
+            }
+            
+        }
+
+        [Test]
+        public async Task ShouldReturnListOfProducts()
+        {
+            var fakeProductRepo = new Mock<IProductRepository>();
+            var fakeCategoryRepo = new Mock<ICategoryRepository>();
+
+
+            var fakeProduct = new List<Entities.Product>();
+
+            for(int i = 0; i < 2; i++){
+                fakeProduct.Add(ProductDTO.MapToEntity(new ProductDTO
+                {
+                    Id = i,
+                    Name = "Product"+i,
+                    Description = "Description"+i,
+                    Price = 12.99m,
+                    Currency = 0
+                }));
+            }
+
+            fakeProductRepo.Setup(x => x.List()).Returns(Task.FromResult<List<Entities.Product>>(fakeProduct));
+
+            var productManager = new ProductManager(fakeProductRepo.Object, fakeCategoryRepo.Object);
+
+            var res = await productManager.GetProducts();
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(fakeProduct.Count, res.Count());
+
+            for (int i = 0; i < fakeProduct.Count; i++)
+            {
+                Assert.AreEqual(fakeProduct[i].Id, res.ElementAt(i).Id);
+                Assert.AreEqual(fakeProduct[i].Name, res.ElementAt(i).Name);
+                Assert.AreEqual(fakeProduct[i].Description, res.ElementAt(i).Description);
+                Assert.AreEqual(fakeProduct[i].Price.Value, res.ElementAt(i).Price);
+            }
         }
 
     }
