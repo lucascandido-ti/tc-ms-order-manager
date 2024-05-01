@@ -1,4 +1,5 @@
-﻿using Application.Customer;
+﻿using Application.Category.Dto;
+using Application.Customer;
 using Application.Customer.Commands;
 using Application.Customer.Dto;
 using Application.Customer.Ports;
@@ -61,6 +62,15 @@ namespace API.Controllers
             if (res.Success) return Created("", res.Data);
 
             return NotFound(res);
+        }
+
+        [HttpGet]
+        [Route("list")]
+        public async Task<ActionResult<List<CustomerDTO>>> List()
+        {
+            var res = await _customerManager.GetCustomers();
+
+            return Accepted("", res);
         }
     }
 }

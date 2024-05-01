@@ -1,4 +1,5 @@
 ﻿
+using Application.Category.Dto;
 using Application.Customer.Dto;
 using Application.Customer.Ports;
 using Application.Customer.Requests;
@@ -84,6 +85,25 @@ namespace Application.Customer
                 Success = true,
                 Data = customerDto
             };
+        }
+
+        public async Task<List<CustomerDTO>> GetCustomers()
+        {
+            var customers = await _customerRepository.List();
+
+            if (customers == null || customers.Count == 0)
+            {
+                return new List<CustomerDTO> { };
+            }
+
+            var listCustomers = new List<CustomerDTO>();
+
+            foreach (var customer in customers)
+            {
+                listCustomers.Add(CustomerDTO.MapToDTO(customer));
+            }
+
+            return listCustomers;
         }
     }
 }
