@@ -1,4 +1,5 @@
-﻿using Application.Product.Requests;
+﻿using Application.Product.Queries;
+using Application.Product.Requests;
 using Application.Product.Responses;
 
 namespace Application.Product.Ports
@@ -6,6 +7,7 @@ namespace Application.Product.Ports
     public interface IProductManager
     {
         Task<ProductResponse> CreateProduct(CreateProductRequest request);
-        Task<ProductResponse> GetProduct(int id);
+        Task<ProductResponse> GetProduct(GetProductQuery get);
+        Task<ProductResponse> GetProductAggregate(GetProductQuery get);
     }
 }

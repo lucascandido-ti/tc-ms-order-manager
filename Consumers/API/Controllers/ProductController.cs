@@ -1,10 +1,8 @@
-﻿using Application.Category;
-using Application.Category.Command;
-using Application.Category.Dto;
-using Application.Category.Ports;
-using Application.Product.Commands;
+﻿using Application.Product.Commands;
 using Application.Product.Dto;
 using Application.Product.Ports;
+using Application.Product.Queries;
+using Domain.Entities;
 using Domain.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +63,37 @@ namespace API.Controllers
             }
             _logger.LogError("Response with unknown ErrorCode Returned", res);
             return BadRequest(500);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ProductDTO>> Get(int productId)
+        {
+            var query = new GetProductQuery
+            {
+                Id = productId
+            };
+
+            var res = await _mediator.Send(query);
+
+            if (res.Success) return Created("", res.Data);
+
+            return NotFound(res);
+        }
+
+        [HttpGet]
+        [Route("{productId}/categories")]
+        public async Task<ActionResult<ProductDTO>> GetAggregate(int productId)
+        {
+            var query = new GetProductAggregateQuery
+            {
+                Id = productId
+            };
+
+            var res = await _mediator.Send(query);
+
+            if (res.Success) return Created("", res.Data);
+
+            return NotFound(res);
         }
     }
 }

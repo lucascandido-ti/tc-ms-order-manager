@@ -18,6 +18,12 @@ namespace ApplicationTests.Product
                 Id = 111,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111
+                    }
+                },
                 Price = 12.99m,
                 Currency = 0
             };
@@ -28,6 +34,11 @@ namespace ApplicationTests.Product
         }
 
         public Task<Entities.Product> Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Entities.Product> GetAggregate(int id)
         {
             throw new NotImplementedException();
         }
@@ -90,7 +101,13 @@ namespace ApplicationTests.Product
                 Description = "Sobremesa e Bebidas",
                 Price = 12.99m,
                 Currency = 0,
-                categoryIds = new List<int>() { 111 }
+                Categories = new List<CategoryDTO> {
+                    new CategoryDTO
+                    {
+                        Id = 111
+                    }
+                }
+                    
             };
 
             var request = new CreateProductRequest()

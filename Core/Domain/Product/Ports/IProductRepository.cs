@@ -4,6 +4,7 @@
     {
         Task<Entities.Product> CreateProduct(Entities.Product product);
         Task<Entities.Product> Get(int id);
+        Task<Entities.Product> GetAggregate(int id);
         Task<List<Entities.Product>> List();
     }
 }

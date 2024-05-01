@@ -1,5 +1,6 @@
 ﻿using Application.Product.Dto;
 using Application.Product.Ports;
+using Application.Product.Queries;
 using Application.Product.Requests;
 using Application.Product.Responses;
 using Domain.Category.Ports;
@@ -30,12 +31,12 @@ namespace Application.Product
 
                 var product = ProductDTO.MapToEntity(request.Data);
 
-                foreach (var categoryId in request.Data.categoryIds)
+                foreach (var category in request.Data.Categories)
                 {
-                    var category = await _categoryRepository.Get(categoryId);
+                    var findCategory = await _categoryRepository.Get(category.Id);
                     if(category != null)
                     {
-                        product.Categories.Add(category);
+                        product.Categories.Add(findCategory);
                     }
                 }
                 
@@ -87,9 +88,50 @@ namespace Application.Product
             }
         }
 
-        public Task<ProductResponse> GetProduct(int id)
+        public async Task<ProductResponse> GetProduct(GetProductQuery get)
         {
-            throw new NotImplementedException();
+            var product = await _productRepository.Get(get.Id);
+
+            if (product == null)
+            {
+                return new ProductResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.PRODUCT_NOT_FOUND,
+                    Message = "No product record was found with the given Id"
+                };
+            }
+
+            var productDto = ProductDTO.MapToDTO(product);
+
+            return new ProductResponse
+            {
+                Success = true,
+                Data = productDto
+            };
+        }
+
+        public async Task<ProductResponse> GetProductAggregate(GetProductQuery get)
+        {
+            var product = await _productRepository.GetAggregate(get.Id);
+
+            if (product == null)
+            {
+                return new ProductResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.PRODUCT_NOT_FOUND,
+                    Message = "No product record was found with the given Id"
+                };
+            }
+
+            var productDto = ProductDTO.MapToDTO(product);
+
+            return new ProductResponse
+            {
+                Success = true,
+                Data = productDto
+            };
         }
     }
 }

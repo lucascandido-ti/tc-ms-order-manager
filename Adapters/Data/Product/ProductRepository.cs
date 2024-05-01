@@ -1,4 +1,6 @@
-﻿using Domain.Product.Ports;
+﻿using Entities = Domain.Entities;
+using Domain.Product.Ports;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Product
 {
@@ -11,21 +13,29 @@ namespace Data.Product
             _dbContext = dbContext;
         }
 
-        public async Task<Domain.Entities.Product> CreateProduct(Domain.Entities.Product product)
+        public async Task<Entities.Product> CreateProduct(Entities.Product product)
         {
             _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync();
             return product;
         }
 
-        public Task<Domain.Entities.Product> Get(int id)
+        public async Task<Entities.Product> Get(int id)
         {
-            throw new NotImplementedException();
+            var product = await _dbContext.Products.FindAsync(id);
+            return product;
         }
 
-        public Task<List<Domain.Entities.Product>> List()
+        public async Task<List<Entities.Product>> List()
         {
-            throw new NotImplementedException();
+            var products = await _dbContext.Products.ToListAsync();
+            return products;
+        }
+
+        public async Task<Entities.Product> GetAggregate(int productId)
+        {
+            var products = await _dbContext.Products.Include(p => p.Categories).Where(p => p.Id == productId).FirstAsync();
+            return products;
         }
     }
 }

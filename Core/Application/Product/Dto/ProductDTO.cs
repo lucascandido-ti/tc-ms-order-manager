@@ -1,4 +1,6 @@
-﻿using Domain.Utils.Enums;
+﻿using Application.Category.Dto;
+using Domain.Utils.Enums;
+using System.Text.Json.Serialization;
 using Entities = Domain.Entities;
 using ValueObjects = Domain.Product.ValueObjects;
 
@@ -9,7 +11,9 @@ namespace Application.Product.Dto
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<int> categoryIds { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<CategoryDTO>? Categories { get; set; }
         public decimal Price { get; set; }
         public AcceptedCurrencies Currency { get; set; }
 
@@ -27,13 +31,29 @@ namespace Application.Product.Dto
 
         public static ProductDTO MapToDTO(Entities.Product product)
         {
-            return new ProductDTO
+            var productDto = new ProductDTO
             {
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price.Value
             };
+
+            var categories = new List<CategoryDTO>();
+
+            if (product.Categories != null && product.Categories.Count > 0)
+            {
+                foreach (var category in product.Categories)
+                {
+                    categories.Add(CategoryDTO.MapToDTO(category));
+                }
+
+                productDto.Categories = categories;
+            }
+
+            return productDto;
+
+
         }
     }
 }
