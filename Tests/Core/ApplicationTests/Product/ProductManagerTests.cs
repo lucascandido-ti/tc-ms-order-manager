@@ -13,6 +13,9 @@ using Application.Category.Queries;
 using Application.Product.Queries;
 using Domain.Product.ValueObjects;
 using System.Xml.Linq;
+using Application.Customer;
+using Domain.Customer.Ports;
+using Domain.Utils;
 
 namespace ApplicationTests.Product
 {
@@ -191,26 +194,52 @@ namespace ApplicationTests.Product
         }
 
         [Test]
-        public async Task ShouldReturnProductSuccess()
+        public async Task ShouldReturnProductNotFoundWhenProductDoesntExist()
         {
             var fakeProductRepo = new Mock<IProductRepository>();
             var fakeCategoryRepo = new Mock<ICategoryRepository>();
 
-            var productDTO = new ProductDTO
+            var fakeProduct = new Entities.Product
             {
+                Id = 333,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
-                Price = 12.99m,
-                Currency = 0,
-                Categories = new List<CategoryDTO> {
-                    new CategoryDTO
+                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
+                Categories = new List<Entities.Category>()
+                {
+                    CategoryDTO.MapToEntity(new CategoryDTO
                     {
                         Id = 111,
                         Name = "Bebida",
                         Description = "Drinques e Bebidas em geral"
-                    }
-                }   
+                    })
+                }
+
             };
+
+            fakeProductRepo.Setup(x => x.Get(333)).Returns(Task.FromResult<Entities.Product?>(null));
+
+            productManager = new ProductManager(fakeProductRepo.Object, fakeCategoryRepo.Object);
+
+            var query = new GetProductQuery
+            {
+                Id = 333
+            };
+
+            var res = await productManager.GetProduct(query);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.PRODUCT_NOT_FOUND);
+            Assert.AreEqual(res.Message, "No product record was found with the given Id");
+
+        }
+
+        [Test]
+        public async Task ShouldReturnProductSuccess()
+        {
+            var fakeProductRepo = new Mock<IProductRepository>();
+            var fakeCategoryRepo = new Mock<ICategoryRepository>();
 
             var fakeProduct = new Entities.Product
             {
