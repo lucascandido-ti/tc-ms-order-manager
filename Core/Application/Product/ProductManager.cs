@@ -1,4 +1,5 @@
-﻿using Application.Product.Dto;
+﻿using Application.Customer.Dto;
+using Application.Product.Dto;
 using Application.Product.Ports;
 using Application.Product.Queries;
 using Application.Product.Requests;
@@ -132,6 +133,25 @@ namespace Application.Product
                 Success = true,
                 Data = productDto
             };
+        }
+
+        public async Task<List<ProductDTO>> GetProducts()
+        {
+            var products = await _productRepository.List();
+
+            if (products == null || products.Count == 0)
+            {
+                return new List<ProductDTO> { };
+            }
+
+            var listProducts = new List<ProductDTO>();
+
+            foreach (var product in products)
+            {
+                listProducts.Add(ProductDTO.MapToDTO(product));
+            }
+
+            return listProducts;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Product.Commands;
+﻿using Application.Customer.Dto;
+using Application.Product.Commands;
 using Application.Product.Dto;
 using Application.Product.Ports;
 using Application.Product.Queries;
@@ -81,7 +82,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("{productId}/categories")]
+        [Route("list")]
+        public async Task<ActionResult<List<ProductDTO>>> List()
+        {
+            var res = await _productManager.GetProducts();
+
+            return Accepted("", res);
+        }
+
+        [HttpGet]
+        [Route("categories")]
         public async Task<ActionResult<ProductDTO>> GetAggregate(int productId)
         {
             var query = new GetProductAggregateQuery
