@@ -6,15 +6,9 @@ using Domain.Category.Ports;
 using Domain.Product.Ports;
 using Entities = Domain.Entities;
 using Moq;
-using Application.Category;
 using ValueObjects = Domain.Product.ValueObjects;
 using Domain.Utils.Enums;
-using Application.Category.Queries;
 using Application.Product.Queries;
-using Domain.Product.ValueObjects;
-using System.Xml.Linq;
-using Application.Customer;
-using Domain.Customer.Ports;
 using Domain.Utils;
 
 namespace ApplicationTests.Product
