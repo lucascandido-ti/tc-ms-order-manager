@@ -16,6 +16,7 @@ namespace Domain.Entities
         public string Description { get; set; }
         public Price Price { get; set; }
         public ICollection<Category> Categories { get; set; }
+        public ICollection<Order>? Orders { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
 

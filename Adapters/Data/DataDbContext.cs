@@ -4,6 +4,7 @@ using Data.Customer;
 using Data.Category;
 using Data.Product;
 using Domain.Entities;
+using Data.Order;
 
 namespace Data
 {
@@ -32,10 +33,16 @@ namespace Data
                 .WithMany(c => c.Products)
                 .UsingEntity(j => j.ToTable("ProductCategory"));
 
+            modelBuilder.Entity<Entities.Order>()
+                .HasMany(p => p.Products)
+                .WithMany(c => c.Orders)
+                .UsingEntity(j => j.ToTable("OrderProduct"));
+
             modelBuilder
                    .ApplyConfiguration(new CustomerConfiguration())
                    .ApplyConfiguration(new CategoryConfiguration())
-                   .ApplyConfiguration(new ProductConfiguration());
+                   .ApplyConfiguration(new ProductConfiguration())
+                   .ApplyConfiguration(new OrderConfiguration());
         }
     }
 }
