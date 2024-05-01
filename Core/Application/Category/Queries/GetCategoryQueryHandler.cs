@@ -20,12 +20,12 @@ namespace Application.Category.Queries
         {
             var category = await _categoryRepository.Get(request.Id);
 
-            var categoryDro = CategoryDTO.MapToDTO(category);
+            var categoryDto = CategoryDTO.MapToDTO(category);
 
             return new CategoryResponse
             {
                 Success = true,
-                Data = categoryDro
+                Data = categoryDto
             };
         }
     }
