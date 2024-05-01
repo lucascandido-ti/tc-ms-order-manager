@@ -240,16 +240,7 @@ namespace ApplicationTests.Product
                 Id = 333,
                 Name = "Milkshake",
                 Description = "Sobremesa e Bebidas",
-                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
-                Categories = new List<Entities.Category>()
-                {
-                    CategoryDTO.MapToEntity(new CategoryDTO
-                    {
-                        Id = 111,
-                        Name = "Bebida",
-                        Description = "Drinques e Bebidas em geral"
-                    })
-                }
+                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m }
 
             };
 
@@ -271,6 +262,52 @@ namespace ApplicationTests.Product
             Assert.AreEqual(res.Data.Description, fakeProduct.Description);
             Assert.AreEqual(res.Data.Price, fakeProduct.Price.Value);
 
+            
+        }
+
+        [Test]
+        public async Task ShouldReturnListOfProductsWithCategories()
+        {
+            var fakeProductRepo = new Mock<IProductRepository>();
+            var fakeCategoryRepo = new Mock<ICategoryRepository>();
+
+            var fakeProduct = new Entities.Product
+            {
+                Id = 333,
+                Name = "Milkshake",
+                Description = "Sobremesa e Bebidas",
+                Price = new ValueObjects.Price { Currency = AcceptedCurrencies.Real, Value = 12.99m },
+                Categories = new List<Entities.Category>()
+                {
+                    CategoryDTO.MapToEntity(new CategoryDTO
+                    {
+                        Id = 111,
+                        Name = "Bebida",
+                        Description = "Drinques e Bebidas em geral"
+                    })
+                }
+
+            };
+
+            fakeProductRepo.Setup(x => x.GetAggregate(333)).Returns(Task.FromResult((Entities.Product?)fakeProduct));
+
+            productManager = new ProductManager(fakeProductRepo.Object, fakeCategoryRepo.Object);
+
+            var query = new GetProductAggregateQuery
+            {
+                Id = 333
+            };
+
+            var res = await productManager.GetProductAggregate(query);
+
+            Assert.IsNotNull(res);
+            Assert.IsNotNull(res.Success);
+
+            Assert.AreEqual(res.Data.Id, fakeProduct.Id);
+            Assert.AreEqual(res.Data.Name, fakeProduct.Name);
+            Assert.AreEqual(res.Data.Description, fakeProduct.Description);
+            Assert.AreEqual(res.Data.Price, fakeProduct.Price.Value);
+
             for (int i = 0; i < fakeProduct.Categories.Count; i++)
             {
                 var fakeCategories = new List<Entities.Category>(fakeProduct.Categories);
@@ -279,7 +316,6 @@ namespace ApplicationTests.Product
                 Assert.AreEqual(fakeCategories[i].Name, res.Data.Categories.ElementAt(i).Name);
                 Assert.AreEqual(fakeCategories[i].Description, res.Data.Categories.ElementAt(i).Description);
             }
-            
         }
 
         [Test]
