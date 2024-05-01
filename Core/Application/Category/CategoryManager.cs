@@ -77,5 +77,24 @@ namespace Application.Category
                 Data = categoryDto
             };
         }
+
+        public async Task<List<CategoryDTO>> GetCategories()
+        {
+            var categories = await _categoryRepository.List();
+
+            if (categories == null || categories.Count == 0)
+            {
+                return new List<CategoryDTO> { };
+            }
+
+            var listCategories = new List<CategoryDTO>();
+
+            foreach(var category in categories) {
+                listCategories.Add(CategoryDTO.MapToDTO(category));
+            }
+
+            return listCategories;
+        }
+
     }
 }

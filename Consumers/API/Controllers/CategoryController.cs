@@ -63,5 +63,14 @@ namespace API.Controllers
 
             return NotFound(res);
         }
+
+        [HttpGet]
+        [Route("list")]
+        public async Task<ActionResult<List<CategoryDTO>>> List()
+        {
+            var res = await _categoryManager.GetCategories();
+
+            return Accepted("", res);
+        }
     }
 }
