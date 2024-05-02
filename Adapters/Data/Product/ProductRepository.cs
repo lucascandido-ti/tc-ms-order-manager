@@ -15,6 +15,12 @@ namespace Data.Product
 
         public async Task<Entities.Product> CreateProduct(Entities.Product product)
         {
+
+            foreach (var category in product.Categories)
+            {
+                _dbContext.Entry(category).State = EntityState.Unchanged;
+            }
+
             _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync();
             return product;

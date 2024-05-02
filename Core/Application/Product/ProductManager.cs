@@ -1,5 +1,4 @@
-﻿using Application.Customer.Dto;
-using Application.Product.Dto;
+﻿using Application.Product.Dto;
 using Application.Product.Ports;
 using Application.Product.Queries;
 using Application.Product.Requests;
@@ -31,15 +30,6 @@ namespace Application.Product
             {
 
                 var product = ProductDTO.MapToEntity(request.Data);
-
-                foreach (var category in request.Data.Categories)
-                {
-                    var findCategory = await _categoryRepository.Get(category.Id);
-                    if(category != null)
-                    {
-                        product.Categories.Add(findCategory);
-                    }
-                }
                 
                 await product.Save(_productRepository);
 
