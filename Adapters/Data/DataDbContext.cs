@@ -15,6 +15,7 @@ namespace Data
         public virtual DbSet<Entities.Customer> Customers { get; set; }
         public virtual DbSet<Entities.Category> Categories { get; set; }
         public virtual DbSet<Entities.Product> Products { get; set; }
+        public virtual DbSet<Entities.Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,12 @@ namespace Data
                 .HasMany(p => p.Products)
                 .WithMany(c => c.Orders)
                 .UsingEntity(j => j.ToTable("OrderProduct"));
+
+            modelBuilder.Entity<Entities.Customer>()
+                .HasMany(o => o.Orders)
+                .WithOne(c => c.Customer)
+                .HasForeignKey(o => o.CustomerId)
+                .IsRequired();
 
             modelBuilder
                    .ApplyConfiguration(new CustomerConfiguration())

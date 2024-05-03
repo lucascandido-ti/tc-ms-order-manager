@@ -15,6 +15,7 @@ namespace Domain.Entities
         public string Name { get; set; }
         public string Email { get; set; }
         public string Cpf { get; set; }
+        public List<Order> Orders { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
 

@@ -15,10 +15,13 @@ namespace Domain.Entities
             CreatedAt = DateTime.UtcNow;
             LastUpdatedAt = DateTime.UtcNow;
         }
+
         public int Id { get; set; }
         public Price Price { get; set; }
         public int Invoice { get; set; }
         public OrderStatus Status { get; set; }
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
         public ICollection<Product> Products { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
