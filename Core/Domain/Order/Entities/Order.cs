@@ -20,6 +20,7 @@ namespace Domain.Entities
         public Price Price { get; set; }
         public int Invoice { get; set; }
         public OrderStatus Status { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
         public ICollection<Product> Products { get; set; }
