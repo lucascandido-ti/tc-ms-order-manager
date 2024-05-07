@@ -1,13 +1,14 @@
-﻿using Application.Order.Dto;
+﻿using Entities = Domain.Entities;
+using Application.Order.Dto;
 using Application.Order.Ports;
+using Application.Order.Queries;
 using Application.Order.Requests;
 using Application.Order.Responses;
-using Application.Product.Dto;
-using Application.Product.Responses;
 using Domain.Order.Exceptions;
 using Domain.Order.Ports;
 using Domain.Product.Ports;
 using Domain.Utils;
+using Application.Product.Dto;
 
 namespace Application.Order
 {
@@ -49,9 +50,51 @@ namespace Application.Order
             }
         }
 
-        public Task<OrderResponse> GetOrder(int id)
+        public async Task<OrderResponse> GetOrder(GetOrderQuery query)
         {
-            throw new NotImplementedException();
+            var order = await _orderRepository.Get(query.Id);
+
+            if (order == null)
+            {
+                return new OrderResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.ORDER_NOT_FOUND,
+                    Message = "No order record was found with the given Id"
+                };
+            }
+
+            var orderDto = OrderDTO.MapToDTO(order);
+
+            return new OrderResponse
+            {
+                Success = true,
+                Data = orderDto
+            };
         }
+
+        public async Task<ListOrderResponse> GetOrders()
+        {
+            var orders = await _orderRepository.List();
+
+            if (orders == null || orders.Count == 0)
+            {
+                return new ListOrderResponse { };
+            }
+
+            var listOrders = new List<OrderDTO>();
+
+            foreach (var order in orders)
+            {
+                listOrders.Add(OrderDTO.MapToDTO(order));
+            }
+
+            return new ListOrderResponse
+            {
+                Success = true,
+                Data = listOrders
+            };
+        }
+
     }
 }
