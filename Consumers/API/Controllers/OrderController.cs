@@ -1,8 +1,11 @@
 ﻿using Application.Order.Command;
 using Application.Order.Dto;
+using Application.Order.Queries;
 using Domain.Utils;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace API.Controllers
 {
@@ -43,6 +46,40 @@ namespace API.Controllers
             {
                 return BadRequest(res);
             }
+            _logger.LogError("Response with unknown ErrorCode Returned", res);
+            return BadRequest(500);
+        }
+
+        [HttpGet]
+        [Route("{orderId}")]
+        public async Task<ActionResult<OrderDTO>> Get(int orderId)
+        {
+            var query = new GetOrderQuery
+            {
+                Id = orderId
+            };
+
+            var res = await _mediator.Send(query);
+
+            if (res.Success) return Ok(res.Data);
+
+            else if (res.ErrorCode == ErrorCodes.ORDER_NOT_FOUND)
+            {
+                return BadRequest(res);
+            }
+            _logger.LogError("Response with unknown ErrorCode Returned", res);
+            return BadRequest(500);
+        }
+        
+        [HttpGet]
+        public async Task<ActionResult<List<OrderDTO>>> List()
+        {
+            var query = new ListOrdersQuery { };
+            
+            var res = await _mediator.Send(query);
+
+            if (res.Success) return Ok(res.Data);
+
             _logger.LogError("Response with unknown ErrorCode Returned", res);
             return BadRequest(500);
         }

@@ -1,22 +1,52 @@
-﻿using Domain.Order.Ports;
+﻿using Entities = Domain.Entities;
+using Domain.Order.Ports;
+using Microsoft.EntityFrameworkCore;
+using Domain.Entities;
 
 namespace Data.Order
 {
     public class OrderRepository : IOrderRepository
     {
-        public Task<Domain.Entities.Order> CreateOrder(Domain.Entities.Order order)
+        private readonly DataDbContext _dbContext;
+
+        public OrderRepository(DataDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
 
-        public Task<Domain.Entities.Order> Get(int id)
+        public async Task<Entities.Order> CreateOrder(Entities.Order order)
         {
-            throw new NotImplementedException();
+            foreach (var product in order.Products)
+            {
+                _dbContext.Entry(product).State = EntityState.Unchanged;
+            }
+
+            _dbContext.Entry(order.Customer).State = EntityState.Unchanged;
+
+            _dbContext.Orders.Add(order);
+            await _dbContext.SaveChangesAsync();
+            return order;
         }
 
-        public Task<List<Domain.Entities.Order>> List()
+        public async Task<Entities.Order> Get(int orderId)
         {
-            throw new NotImplementedException();
+            var order = await _dbContext.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Products)
+                .Where(o => o.Id == orderId)
+                .FirstOrDefaultAsync();
+
+            return order;
+        }
+
+        public async Task<List<Entities.Order>> List()
+        {
+            var orders = await _dbContext.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Products)
+                .ToListAsync();
+
+            return orders;
         }
     }
 }
