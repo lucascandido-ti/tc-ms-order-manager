@@ -21,10 +21,13 @@ namespace Application.Product.Dto
         {
             var categoryEntities = new List<Entities.Category>();
 
-            foreach(var category in dto.Categories)
-            {
-                categoryEntities.Add(CategoryDTO.MapToEntity(category));
+            if(dto.Categories != null) {
+                foreach (var category in dto.Categories)
+                {
+                    categoryEntities.Add(CategoryDTO.MapToEntity(category));
+                }
             }
+            
 
             return new Entities.Product
             {
