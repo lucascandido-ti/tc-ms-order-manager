@@ -55,6 +55,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("{customerId}")]
         public async Task<ActionResult<CustomerDTO>> Get(int customerId)
         {
             var res = await _customerManager.GetCustomer(customerId);
@@ -65,7 +66,6 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("list")]
         public async Task<ActionResult<List<CustomerDTO>>> List()
         {
             var res = await _customerManager.GetCustomers();

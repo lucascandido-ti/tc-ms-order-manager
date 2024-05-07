@@ -67,6 +67,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("{productId}")]
         public async Task<ActionResult<ProductDTO>> Get(int productId)
         {
             var query = new GetProductQuery
@@ -82,7 +83,6 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("list")]
         public async Task<ActionResult<List<ProductDTO>>> List()
         {
             var res = await _productManager.GetProducts();
@@ -91,7 +91,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("categories")]
+        [Route("{productId}/categories")]
         public async Task<ActionResult<ProductDTO>> GetAggregate(int productId)
         {
             var query = new GetProductAggregateQuery

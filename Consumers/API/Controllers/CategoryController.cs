@@ -55,6 +55,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("{categoryId}")]
         public async Task<ActionResult<CategoryDTO>> Get(int categoryId)
         {
             var res = await _categoryManager.GetCategory(categoryId);
@@ -65,7 +66,6 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("list")]
         public async Task<ActionResult<List<CategoryDTO>>> List()
         {
             var res = await _categoryManager.GetCategories();
