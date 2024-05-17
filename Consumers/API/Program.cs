@@ -15,7 +15,10 @@ using Domain.Category.Ports;
 using Domain.Customer.Ports;
 using Domain.Order.Ports;
 using Domain.Product.Ports;
+using Domain.Queue.Ports;
 using Microsoft.EntityFrameworkCore;
+using Queue.Consumers;
+using Queue.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Categ
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OrderManager).Assembly));
 
+
 # region IoC
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -36,6 +40,12 @@ builder.Services.AddScoped<IProductManager, ProductManager>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IQueueRepository, RabbitMQRepository>();
+builder.Services.AddScoped<IQueueConsumer, RabbitMQConsumer>();
+# endregion
+
+# region Consumers
+new RabbitMQConsumer();
 # endregion
 
 # region DB wiring up
@@ -55,8 +65,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection(); // Certifique-se de que essa linha não esteja presente
+}
 
 app.UseAuthorization();
 

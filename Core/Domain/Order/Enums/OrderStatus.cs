@@ -4,6 +4,9 @@ namespace Domain.Order.Enums
 {
     public enum OrderStatus
     {
+        [StringValue("Pending")]
+        PENDING,
+        
         [StringValue("Received")]
         RECEIVED,
 

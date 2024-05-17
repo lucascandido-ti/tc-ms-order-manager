@@ -1,5 +1,5 @@
-﻿using Entities = Domain.Entities;
-using Application.Order.Dto;
+﻿using Application.Order.Dto;
+using Application.Order.Events;
 using Application.Order.Ports;
 using Application.Order.Queries;
 using Application.Order.Requests;
@@ -7,8 +7,8 @@ using Application.Order.Responses;
 using Domain.Order.Exceptions;
 using Domain.Order.Ports;
 using Domain.Product.Ports;
+using Domain.Queue.Ports;
 using Domain.Utils;
-using Application.Product.Dto;
 
 namespace Application.Order
 {
@@ -16,11 +16,17 @@ namespace Application.Order
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IQueueRepository _rabbitMQRepository;
 
-        public OrderManager(IOrderRepository orderRepository, IProductRepository productRepository)
+        public OrderManager(
+            IOrderRepository orderRepository,
+            IProductRepository productRepository,
+            IQueueRepository rabbitMQRepository
+        )
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _rabbitMQRepository = rabbitMQRepository;
         }
 
         public async Task<OrderResponse> CreateOrder(CreateOrderRequest request)
@@ -32,6 +38,13 @@ namespace Application.Order
                 await order.Save(_orderRepository);
 
                 request.Data.Id = order.Id;
+
+                var createOrderEvent = new CreateOrderEvent()
+                {
+                    Order = request.Data
+                };
+
+                _rabbitMQRepository.Publish(createOrderEvent.Order, "created-new-order", "order-service-queue");
 
                 return new OrderResponse
                 {

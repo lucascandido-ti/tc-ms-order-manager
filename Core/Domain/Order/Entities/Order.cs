@@ -1,7 +1,6 @@
 ﻿using Domain.Order.Enums;
 using Domain.Order.Exceptions;
 using Domain.Order.Ports;
-using Domain.Utils;
 using Domain.Utils.Enums;
 using Domain.Utils.ValueObjects;
 
@@ -11,7 +10,7 @@ namespace Domain.Entities
     {
         public Order()
         {
-            Status = OrderStatus.RECEIVED;
+            Status = OrderStatus.PENDING;
             CreatedAt = DateTime.UtcNow;
             LastUpdatedAt = DateTime.UtcNow;
         }

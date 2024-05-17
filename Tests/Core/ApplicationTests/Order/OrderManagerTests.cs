@@ -13,7 +13,7 @@ using Application.Order.Requests;
 using Application.Order.Queries;
 using Application.Product.Dto;
 using Application.Customer.Dto;
-
+using Domain.Queue.Ports;
 
 namespace ApplicationTests.Order
 {
@@ -47,7 +47,7 @@ namespace ApplicationTests.Order
                 Price = 129.99m,
                 Currency = AcceptedCurrencies.Real,
                 Invoice = 0,
-                Status = OrderStatus.RECEIVED,
+                Status = OrderStatus.PENDING,
                 PaymentMethod = PaymentMethod.QRCode,
                 Customer = customer,
                 Products = products
@@ -103,6 +103,7 @@ namespace ApplicationTests.Order
 
             var fakeRepoOrder = new Mock<IOrderRepository>();
             var fakeRepoProduct = new Mock<IProductRepository>();
+            var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var expectEntity = OrderDTO.MapToEntity(orderDTO);
             expectEntity.Id = 111;
@@ -110,7 +111,7 @@ namespace ApplicationTests.Order
             fakeRepoOrder.Setup(x => x.CreateOrder(It.IsAny<Entities.Order>()))
                 .Returns(Task.FromResult(expectEntity));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
 
             var res = await orderManager.CreateOrder(request);
 
@@ -123,12 +124,13 @@ namespace ApplicationTests.Order
         {
             var fakeRepoOrder = new Mock<IOrderRepository>();
             var fakeRepoProduct = new Mock<IProductRepository>();
+            var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var fakeOrder = new FakeRepoOrder().GetMoqOrder();
 
             fakeRepoOrder.Setup(x => x.Get(333)).Returns(Task.FromResult<Entities.Order?>(null));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
 
             var query = new GetOrderQuery
             {
@@ -148,6 +150,7 @@ namespace ApplicationTests.Order
         {
             var fakeRepoOrder = new Mock<IOrderRepository>();
             var fakeRepoProduct = new Mock<IProductRepository>();
+            var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var fakeOrderDTO = new FakeRepoOrder().GetMoqOrder();
 
@@ -155,7 +158,7 @@ namespace ApplicationTests.Order
 
             fakeRepoOrder.Setup(x => x.Get(111)).Returns(Task.FromResult((Entities.Order?)fakeOrderEntity));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
 
             var query = new GetOrderQuery
             {
