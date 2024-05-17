@@ -6,4 +6,17 @@
         Dollar,
         Euro
     }
+
+    public enum PaymentSatus
+    {
+        [StringValue("Pending")]
+        PENDING,
+
+        [StringValue("Expired")]
+        EXPIRED,
+
+        [StringValue("Concluded")]
+        CONCLUDED
+    }
+    
 }

@@ -1,7 +1,6 @@
 ﻿using Domain.Queue.Ports;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System.Dynamic;
 using System.Text;
 
 namespace Queue.Repositories

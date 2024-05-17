@@ -24,6 +24,10 @@
         ORDER_NOT_FOUND = 300,
         ORDER_PRICE_REQUIRED,
         ORDER_PRODUCTS_REQUIRED,
+
+        // Payment
+        PAYMENT_NOT_PROCESSED = 400,
+        PAYMENT_ORDER_NOT_FOUND
     }
     public abstract class Response
     {

@@ -4,6 +4,8 @@ using Application.Customer;
 using Application.Customer.Ports;
 using Application.Order;
 using Application.Order.Ports;
+using Application.Payment;
+using Application.Payment.Ports;
 using Application.Product;
 using Application.Product.Ports;
 using Data;
@@ -29,6 +31,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Custo
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CategoryManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OrderManager).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PaymentManager).Assembly));
 
 
 # region IoC
@@ -42,6 +45,7 @@ builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IQueueRepository, RabbitMQRepository>();
 builder.Services.AddScoped<IQueueConsumer, RabbitMQConsumer>();
+builder.Services.AddScoped<IPaymentManager, PaymentManager>();
 # endregion
 
 # region Consumers

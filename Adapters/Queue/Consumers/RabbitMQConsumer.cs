@@ -1,6 +1,8 @@
 ﻿
+using Application.Payment.Dto;
 using Domain.Queue.Ports;
 using Newtonsoft.Json;
+using Queue.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;

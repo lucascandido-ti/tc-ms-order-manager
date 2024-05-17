@@ -8,6 +8,7 @@ namespace Application.Order.Ports
     public interface IOrderManager
     {
         Task<OrderResponse> CreateOrder(CreateOrderRequest request);
+        Task<OrderResponse> SendOrderToProduction(SendOrderToProductionRequest request);
         Task<OrderResponse> GetOrder(GetOrderQuery query);
         Task<ListOrderResponse> GetOrders();
     }

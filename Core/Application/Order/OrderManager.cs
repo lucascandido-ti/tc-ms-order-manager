@@ -15,17 +15,14 @@ namespace Application.Order
     public class OrderManager : IOrderManager
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IProductRepository _productRepository;
         private readonly IQueueRepository _rabbitMQRepository;
 
         public OrderManager(
             IOrderRepository orderRepository,
-            IProductRepository productRepository,
             IQueueRepository rabbitMQRepository
         )
         {
             _orderRepository = orderRepository;
-            _productRepository = productRepository;
             _rabbitMQRepository = rabbitMQRepository;
         }
 
@@ -109,5 +106,9 @@ namespace Application.Order
             };
         }
 
+        public Task<OrderResponse> SendOrderToProduction(SendOrderToProductionRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
