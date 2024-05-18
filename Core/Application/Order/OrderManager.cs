@@ -34,11 +34,11 @@ namespace Application.Order
 
                 await order.Save(_orderRepository);
 
-                request.Data.Id = order.Id;
+                var orderDto = OrderDTO.MapToDTO(order);
 
                 var createOrderEvent = new CreateOrderEvent()
                 {
-                    Order = request.Data
+                    Order = orderDto
                 };
 
                 _rabbitMQRepository.Publish(createOrderEvent.Order, "created-new-order", "order-service-queue");
@@ -46,7 +46,7 @@ namespace Application.Order
                 return new OrderResponse
                 {
                     Success = true,
-                    Data = request.Data,
+                    Data = orderDto,
                 };
             }
             catch (OrderProductsRequiredExceptions)
