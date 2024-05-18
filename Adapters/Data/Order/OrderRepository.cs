@@ -2,6 +2,7 @@
 using Domain.Order.Ports;
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
+using Domain.Order.Enums;
 
 namespace Data.Order
 {
@@ -47,6 +48,18 @@ namespace Data.Order
                 .ToListAsync();
 
             return orders;
+        }
+
+        public async Task<Entities.Order> SendOrderToProduction(Entities.Order order)
+        {
+            var data = await _dbContext.Orders.Where(o => o.Id == order.Id).FirstOrDefaultAsync();
+            data.Status = OrderStatus.RECEIVED;
+            data.LastUpdatedAt = DateTime.UtcNow;
+
+            _dbContext.Orders.Update(data);
+
+            await _dbContext.SaveChangesAsync();
+            return data;
         }
     }
 }

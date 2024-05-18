@@ -106,9 +106,22 @@ namespace Application.Order
             };
         }
 
-        public Task<OrderResponse> SendOrderToProduction(SendOrderToProductionRequest request)
+        public async Task<OrderResponse> SendOrderToProduction(SendOrderToProductionRequest request)
         {
-            throw new NotImplementedException();
+            var query = await GetOrder(new GetOrderQuery { Id = request.orderId });
+
+            var orderEntity = OrderDTO.MapToEntity(query.Data);
+
+            var orderUpdated = await _orderRepository.SendOrderToProduction(orderEntity);
+
+            var orderDto = OrderDTO.MapToDTO(orderUpdated);
+
+            return new OrderResponse
+            {
+                Success = true,
+                Data = orderDto
+            };
+            
         }
     }
 }
