@@ -102,7 +102,6 @@ namespace ApplicationTests.Order
             };
 
             var fakeRepoOrder = new Mock<IOrderRepository>();
-            var fakeRepoProduct = new Mock<IProductRepository>();
             var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var expectEntity = OrderDTO.MapToEntity(orderDTO);
@@ -111,7 +110,7 @@ namespace ApplicationTests.Order
             fakeRepoOrder.Setup(x => x.CreateOrder(It.IsAny<Entities.Order>()))
                 .Returns(Task.FromResult(expectEntity));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoQueue.Object);
 
             var res = await orderManager.CreateOrder(request);
 
@@ -123,14 +122,13 @@ namespace ApplicationTests.Order
         public async Task ShouldReturnOrderNotFoundWhenOrderDoesntExist()
         {
             var fakeRepoOrder = new Mock<IOrderRepository>();
-            var fakeRepoProduct = new Mock<IProductRepository>();
             var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var fakeOrder = new FakeRepoOrder().GetMoqOrder();
 
             fakeRepoOrder.Setup(x => x.Get(333)).Returns(Task.FromResult<Entities.Order?>(null));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoQueue.Object);
 
             var query = new GetOrderQuery
             {
@@ -149,7 +147,6 @@ namespace ApplicationTests.Order
         public async Task ShouldReturnOrderSuccess()
         {
             var fakeRepoOrder = new Mock<IOrderRepository>();
-            var fakeRepoProduct = new Mock<IProductRepository>();
             var fakeRepoQueue = new Mock<IQueueRepository>();
 
             var fakeOrderDTO = new FakeRepoOrder().GetMoqOrder();
@@ -158,7 +155,7 @@ namespace ApplicationTests.Order
 
             fakeRepoOrder.Setup(x => x.Get(111)).Returns(Task.FromResult((Entities.Order?)fakeOrderEntity));
 
-            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoProduct.Object, fakeRepoQueue.Object);
+            orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoQueue.Object);
 
             var query = new GetOrderQuery
             {
