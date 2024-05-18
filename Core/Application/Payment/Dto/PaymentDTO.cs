@@ -6,7 +6,7 @@ namespace Application.Payment.Dto
 {
     public class PaymentDTO
     {
-        public int id { get; set; }
+        public string id { get; set; }
         public PaymentMethod paymentMethod { get; set; }
         public PaymentSatus paymentStatus { get; set; }
         public int orderId { get; set; }

@@ -1,5 +1,4 @@
-﻿using Application.Order.Responses;
-using Application.Payment.Dto;
+﻿using Application.Payment.Dto;
 using Application.Payment.Responses;
 using MediatR;
 

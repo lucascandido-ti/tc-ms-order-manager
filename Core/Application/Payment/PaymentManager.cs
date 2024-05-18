@@ -16,13 +16,11 @@ namespace Application.Payment
 {
     public class PaymentManager : IPaymentManager
     {
-        private readonly IOrderManager _orderManager;
         private readonly IMediator _mediator;
 
-        public PaymentManager(IOrderManager orderManager, IMediator mediator)
+        public PaymentManager(IMediator mediator)
         {
-            _orderManager = orderManager;
-            _mediator = _mediator;
+            _mediator = mediator;
 
         }
 

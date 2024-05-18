@@ -1,9 +1,7 @@
-﻿using Application.Order.Ports;
-using Application.Order.Responses;
+﻿
 using Application.Payment.Ports;
 using Application.Payment.Requests;
 using Application.Payment.Responses;
-using Domain.Utils.Enums;
 using MediatR;
 
 namespace Application.Payment.Command
@@ -19,14 +17,14 @@ namespace Application.Payment.Command
             _paymentManager = paymentManager;
         }
 
-        public async Task<PaymentResponse> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
+        public Task<PaymentResponse> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
         {
-            var payload = new ProcessPaymentRequest
+            var req = new ProcessPaymentRequest
             {
                 Data = request.paymentDTO
             };
 
-            return await _paymentManager.ProcessPayment(payload);
+            return _paymentManager.ProcessPayment(req);
         }
     }
 }

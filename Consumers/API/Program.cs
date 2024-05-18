@@ -27,11 +27,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CustomerManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CategoryManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OrderManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PaymentManager).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RabbitMQConsumer).Assembly));
 
 
 # region IoC
@@ -44,12 +46,11 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IQueueRepository, RabbitMQRepository>();
-builder.Services.AddScoped<IQueueConsumer, RabbitMQConsumer>();
 builder.Services.AddScoped<IPaymentManager, PaymentManager>();
 # endregion
 
 # region Consumers
-new RabbitMQConsumer();
+builder.Services.AddHostedService<RabbitMQConsumer>();
 # endregion
 
 # region DB wiring up
