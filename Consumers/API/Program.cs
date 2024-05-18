@@ -19,7 +19,7 @@ using Domain.Order.Ports;
 using Domain.Product.Ports;
 using Domain.Queue.Ports;
 using Microsoft.EntityFrameworkCore;
-using Queue.Consumers;
+using Queue.Consumers.Payment;
 using Queue.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +33,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Categ
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OrderManager).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PaymentManager).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RabbitMQConsumer).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PaymentConsumer).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductionConsumer).Assembly));
 
 
 # region IoC
@@ -50,7 +51,8 @@ builder.Services.AddScoped<IPaymentManager, PaymentManager>();
 # endregion
 
 # region Consumers
-builder.Services.AddHostedService<RabbitMQConsumer>();
+builder.Services.AddHostedService<PaymentConsumer>();
+builder.Services.AddHostedService<ProductionConsumer>();
 # endregion
 
 # region DB wiring up

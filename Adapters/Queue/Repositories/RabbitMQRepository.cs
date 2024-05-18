@@ -22,15 +22,19 @@ namespace Queue.Repositories
 
             _channel = _connection.CreateModel();
 
-            _channel.ExchangeDeclare(_exchange, ExchangeType.Topic, durable: true);
+            
 
             
         }
 
         public void Publish(object data, string routingKey, string queueName)
         {
-            _channel.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            _channel.QueueBind(queueName, _exchange, routingKey);
+            var queue = queueName + "." + routingKey;
+            var exchange = _exchange + "." + routingKey;
+
+            _channel.ExchangeDeclare(exchange, ExchangeType.Topic, durable: true);
+            _channel.QueueDeclare(queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueBind(queue, exchange, routingKey);
 
             var type = data.GetType();
 
@@ -46,7 +50,7 @@ namespace Queue.Repositories
 
             Console.WriteLine($"{type.Name} Published");
 
-            _channel.BasicPublish(_exchange, routingKey, null, byteArray);
+            _channel.BasicPublish(exchange, routingKey, null, byteArray);
         }
     }
 }

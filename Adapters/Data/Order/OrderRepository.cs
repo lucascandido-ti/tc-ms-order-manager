@@ -50,16 +50,20 @@ namespace Data.Order
             return orders;
         }
 
-        public async Task<Entities.Order> SendOrderToProduction(Entities.Order order)
+        public async Task<Entities.Order> UpdateStatus(Entities.Order order, OrderStatus status)
         {
             var data = await _dbContext.Orders.Where(o => o.Id == order.Id).FirstOrDefaultAsync();
-            data.Status = OrderStatus.RECEIVED;
+            data.Status = status;
             data.LastUpdatedAt = DateTime.UtcNow;
 
             _dbContext.Orders.Update(data);
 
             await _dbContext.SaveChangesAsync();
-            return data;
+
+            var getFullOrder = await Get(data.Id);
+
+            return getFullOrder;
         }
+
     }
 }

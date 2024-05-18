@@ -4,9 +4,9 @@ using Application.Order.Ports;
 using Application.Order.Queries;
 using Application.Order.Requests;
 using Application.Order.Responses;
+using Domain.Order.Enums;
 using Domain.Order.Exceptions;
 using Domain.Order.Ports;
-using Domain.Product.Ports;
 using Domain.Queue.Ports;
 using Domain.Utils;
 
@@ -112,9 +112,11 @@ namespace Application.Order
 
             var orderEntity = OrderDTO.MapToEntity(query.Data);
 
-            var orderUpdated = await _orderRepository.SendOrderToProduction(orderEntity);
+            var orderUpdated = await _orderRepository.UpdateStatus(orderEntity, OrderStatus.RECEIVED);
 
             var orderDto = OrderDTO.MapToDTO(orderUpdated);
+
+            _rabbitMQRepository.Publish(orderDto, "send-order-to-production", "order-service-queue");
 
             return new OrderResponse
             {
@@ -123,5 +125,40 @@ namespace Application.Order
             };
             
         }
+
+        public async Task<OrderResponse> StartProduction(StartProductionRequest request)
+        {
+            var query = await GetOrder(new GetOrderQuery { Id = request.orderId });
+
+            var orderEntity = OrderDTO.MapToEntity(query.Data);
+
+            var orderUpdated = await _orderRepository.UpdateStatus(orderEntity, OrderStatus.IN_PREPARATION);
+
+            var orderDto = OrderDTO.MapToDTO(orderUpdated);
+
+            return new OrderResponse
+            {
+                Success = true,
+                Data = orderDto
+            };
+        }
+
+        public async Task<OrderResponse> ConcludedProduction(ConcludedProductionRequest request)
+        {
+            var query = await GetOrder(new GetOrderQuery { Id = request.orderId });
+
+            var orderEntity = OrderDTO.MapToEntity(query.Data);
+
+            var orderUpdated = await _orderRepository.UpdateStatus(orderEntity, OrderStatus.CONCLUDED);
+
+            var orderDto = OrderDTO.MapToDTO(orderUpdated);
+
+            return new OrderResponse
+            {
+                Success = true,
+                Data = orderDto
+            };
+        }
+
     }
 }

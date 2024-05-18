@@ -1,10 +1,9 @@
-﻿
-using Application.Order.Ports;
+﻿using Application.Order.Ports;
 using Application.Order.Requests;
 using Application.Order.Responses;
 using MediatR;
 
-namespace Application.Order.Command
+namespace Application.Order.Command.SendOrderToProduction
 {
     public class SendOrderToProductionCommandHandler : IRequestHandler<SendOrderToProductionCommand, OrderResponse>
     {

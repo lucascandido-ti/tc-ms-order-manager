@@ -1,41 +1,17 @@
 ﻿
 using Application.Payment.Command;
 using Application.Payment.Dto;
-using Domain.Queue.Interfaces;
-using Domain.Queue.Ports;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using Queue.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace Queue.Consumers
+namespace Queue.Consumers.Payment
 {
-
-    public interface IQueueData<T>
-    {
-        string pattern { get; set; }
-        T data { get; set; }
-    }
-
-    public class QueueData<T> : IQueueData<T>
-    {
-        public string pattern { get; set; }
-        public T data { get; set; }
-    }
-
-    public static class JsonParser
-    {
-        public static IQueueData<T> ParseMessage<T>(string message)
-        {
-            return JsonConvert.DeserializeObject<QueueData<T>>(message);
-        }
-    }
-
-    public class RabbitMQConsumer : BackgroundService
+    public class PaymentConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConnection _connection;
@@ -43,7 +19,7 @@ namespace Queue.Consumers
         private const string QueueName = "payment-service-queue";
 
 
-        public RabbitMQConsumer(IServiceProvider serviceProvider)
+        public PaymentConsumer(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             var factory = new ConnectionFactory() { HostName = "localhost" }; // Ajuste as configurações conforme necessário
@@ -72,7 +48,8 @@ namespace Queue.Consumers
             {
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                try {
+                try
+                {
                     var queueData = JsonParser.ParseMessage<PaymentDTO>(message);
                     if (queueData != null && queueData.pattern == "processed-payment")
                     {
@@ -90,7 +67,7 @@ namespace Queue.Consumers
                 {
                     Console.WriteLine("ProcessPaymentMessageAsync Erro: {0}", ex.Message);
                 }
-                
+
             }
         }
     }

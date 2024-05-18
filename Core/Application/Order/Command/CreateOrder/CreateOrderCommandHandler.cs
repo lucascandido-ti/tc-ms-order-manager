@@ -3,7 +3,7 @@ using Application.Order.Requests;
 using Application.Order.Responses;
 using MediatR;
 
-namespace Application.Order.Command
+namespace Application.Order.Command.CreateOrder
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderResponse>
     {

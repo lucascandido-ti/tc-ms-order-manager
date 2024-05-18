@@ -2,9 +2,9 @@
 using Application.Order.Responses;
 using MediatR;
 
-namespace Application.Order.Command
+namespace Application.Order.Command.CreateOrder
 {
-    public class CreateOrderCommand: IRequest<OrderResponse>
+    public class CreateOrderCommand : IRequest<OrderResponse>
     {
         public OrderDTO orderDTO { get; set; }
     }

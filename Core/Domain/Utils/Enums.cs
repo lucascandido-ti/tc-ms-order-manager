@@ -18,5 +18,17 @@
         [StringValue("Concluded")]
         CONCLUDED
     }
+
+    public enum ProductionStatus
+    {
+        [StringValue("Received")]
+        RECEIVED,
+
+        [StringValue("In Preparation")]
+        IN_PREPARATION,
+
+        [StringValue("Concluded")]
+        CONCLUDED
+    }
     
 }
