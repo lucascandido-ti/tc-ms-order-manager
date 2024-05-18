@@ -82,6 +82,11 @@ namespace ApplicationTests.Order
 
             return Task.FromResult(new List<Entities.Order> { orderEntity });
         }
+
+        public Task<Entities.Order> UpdateStatus(Entities.Order order, OrderStatus status)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class Tests
     {
