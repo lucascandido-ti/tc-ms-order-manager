@@ -2,6 +2,7 @@
 using Application.Payment.Command;
 using Application.Payment.Dto;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Queue.Utils;
@@ -19,11 +20,24 @@ namespace Queue.Consumers.Payment
         private const string QueueName = "payment-service-queue";
 
 
-        public PaymentConsumer(IServiceProvider serviceProvider)
+        public PaymentConsumer(IServiceProvider serviceProvider, IConfiguration configuration)
         {
+            var rabbitMQConfig = configuration.GetSection("RabbitMQ");
+            var hostName = rabbitMQConfig.GetValue<string>("HostName");
+            var port = rabbitMQConfig.GetValue<int>("Port");
+            var username = rabbitMQConfig.GetValue<string>("UserName");
+            var password = rabbitMQConfig.GetValue<string>("Password");
+
+            var connectionFactory = new ConnectionFactory
+            {
+                HostName = hostName,
+                Port = port,
+                UserName = username,
+                Password = password
+            };
+
             _serviceProvider = serviceProvider;
-            var factory = new ConnectionFactory() { HostName = "localhost" }; // Ajuste as configurações conforme necessário
-            _connection = factory.CreateConnection();
+            _connection = connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();
             _channel.QueueDeclare(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }

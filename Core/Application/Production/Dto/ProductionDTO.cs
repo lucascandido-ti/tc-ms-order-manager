@@ -7,7 +7,7 @@ namespace Application.Production.Dto
     {
         public string id { get; set; }
         public int orderId { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public string Currency { get; set; }
         public int Invoice { get; set; }
         public OrderStatus Status { get; set; }

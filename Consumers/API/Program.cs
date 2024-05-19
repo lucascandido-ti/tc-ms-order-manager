@@ -19,6 +19,7 @@ using Domain.Order.Ports;
 using Domain.Product.Ports;
 using Domain.Queue.Ports;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Queue.Consumers.Payment;
 using Queue.Repositories;
 
@@ -36,6 +37,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Payme
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PaymentConsumer).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProductionConsumer).Assembly));
 
+// Register IConfiguration
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 # region IoC
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
@@ -56,6 +59,7 @@ builder.Services.AddHostedService<ProductionConsumer>();
 # endregion
 
 # region DB wiring up
+
 var connectionString = builder.Configuration.GetConnectionString("Main");
 builder.Services.AddDbContext<DataDbContext>(options => options.UseNpgsql(connectionString));
 #endregion
@@ -65,6 +69,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<DataDbContext>();
+        dbContext.Database.Migrate();
+        Console.WriteLine("Successfully updated migrations...");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error applying migrations: " + ex.Message);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

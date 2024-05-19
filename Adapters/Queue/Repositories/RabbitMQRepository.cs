@@ -1,4 +1,5 @@
 ﻿using Domain.Queue.Ports;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
@@ -11,20 +12,26 @@ namespace Queue.Repositories
         private readonly IModel _channel;
         private const string _exchange = "order-service";
 
-        public RabbitMQRepository()
+        public RabbitMQRepository(IConfiguration configuration)
         {
+            var rabbitMQConfig = configuration.GetSection("RabbitMQ");
+            var hostName = rabbitMQConfig.GetValue<string>("HostName");
+            var port = rabbitMQConfig.GetValue<int>("Port");
+            var username = rabbitMQConfig.GetValue<string>("UserName");
+            var password = rabbitMQConfig.GetValue<string>("Password");
+
             var connectionFactory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = hostName,
+                Port = port,
+                UserName = username,
+                Password = password
             };
 
             _connection = connectionFactory.CreateConnection("order-service-publisher");
 
             _channel = _connection.CreateModel();
 
-            
-
-            
         }
 
         public void Publish(object data, string routingKey, string queueName)
