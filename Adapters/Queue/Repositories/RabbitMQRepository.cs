@@ -1,6 +1,5 @@
 ﻿using Domain.Queue.Ports;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Queue.Factories;
 using RabbitMQ.Client;

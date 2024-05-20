@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Queue.Ports;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
 namespace Queue.Factories
 {
-    public class QueueFactory
+    public class QueueFactory: IQueueFactory
     {
         private readonly ConnectionFactory _connectionFactory;
         private readonly IConnection _connection;

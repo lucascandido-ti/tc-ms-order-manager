@@ -1,6 +1,7 @@
 ﻿using Application.Production.Commands;
 using Application.Production.Commands.StartProduction;
 using Application.Production.Dto;
+using Domain.Queue.Ports;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ using Queue.Utils;
 
 namespace Queue.Consumers.Payment
 {
-    public class ProductionConsumer : BackgroundService
+    public class ProductionConsumer : BackgroundService, IProductionConsumer
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly QueueFactory _queueInstanse;
@@ -28,7 +29,7 @@ namespace Queue.Consumers.Payment
         }
 
 
-        private async Task ProductionMessageAsync(string message)
+        public async Task ProductionMessageAsync(string message)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -65,5 +66,6 @@ namespace Queue.Consumers.Payment
 
             }
         }
+
     }
 }

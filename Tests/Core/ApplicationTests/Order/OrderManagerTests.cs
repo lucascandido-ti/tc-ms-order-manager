@@ -5,7 +5,7 @@ using Domain.Utils;
 using Domain.Order.Enums;
 using Domain.Order.Ports;
 using Domain.Utils.Enums;
-using Domain.Product.Ports;
+using Domain.Queue.Ports;
 
 using Application.Order;
 using Application.Order.Dto;
@@ -13,12 +13,16 @@ using Application.Order.Requests;
 using Application.Order.Queries;
 using Application.Product.Dto;
 using Application.Customer.Dto;
-using Domain.Queue.Ports;
+
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using Queue.Ports;
 
 namespace ApplicationTests.Order
 {
     class FakeRepoOrder : IOrderRepository
     {
+        
         public OrderDTO GetMoqOrder()
         {
             var customer = new CustomerDTO
@@ -90,8 +94,10 @@ namespace ApplicationTests.Order
     }
     public class Tests
     {
-
+        
         OrderManager orderManager;
+
+        public async Task<Task> MockProductionMessageAsync(string message) { return Task.CompletedTask; }
 
         [SetUp]
         public void Setup() { }
@@ -115,12 +121,65 @@ namespace ApplicationTests.Order
             fakeRepoOrder.Setup(x => x.CreateOrder(It.IsAny<Entities.Order>()))
                 .Returns(Task.FromResult(expectEntity));
 
+
+            fakeRepoQueue.Setup(x => x.Publish(It.IsAny<Entities.Order>(), "create-new-order-test", "order-service-queue-test"));
+
             orderManager = new OrderManager(fakeRepoOrder.Object, fakeRepoQueue.Object);
 
             var res = await orderManager.CreateOrder(request);
 
             Assert.IsNotNull(res);
             Assert.True(res.Success);
+        }
+
+        [Test]
+        public async Task ShouldBeAbleToReceiveAPaymentQueueEventToSendOrderToProduction()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var serviceScopeMock = new Mock<IServiceScope>();
+            var mediatorMock = new Mock<IMediator>();
+
+            serviceProviderMock.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mediatorMock.Object);
+            serviceScopeFactoryMock.Setup(ssf => ssf.CreateScope()).Returns(serviceScopeMock.Object);
+            serviceScopeMock.Setup(ss => ss.ServiceProvider).Returns(serviceProviderMock.Object);
+
+            serviceProviderMock.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(serviceScopeFactoryMock.Object);
+
+            var configurationMock = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
+
+            configurationMock.SetupGet(c => c["RabbitMQ:HostName"]).Returns("localhost");
+            configurationMock.SetupGet(c => c["RabbitMQ:Port"]).Returns("5672");
+            configurationMock.SetupGet(c => c["RabbitMQ:UserName"]).Returns("guest");
+            configurationMock.SetupGet(c => c["RabbitMQ:Password"]).Returns("guest");
+
+            var factoryMock = new Mock<IQueueFactory>();
+            factoryMock.Setup(f => f.ConsumeAsync(MockProductionMessageAsync));
+
+            var consumer = new Mock<IPaymentCustomer>();
+
+            var message = "{\"pattern\":\"processed-payment\",\"data\":{\"id\":\"1\",\"amount\":10.0}}";
+
+            consumer.Setup(f => f.ProcessPaymentMessageAsync(message)).Returns(Task.CompletedTask);
+            
+        }
+
+        [Test]
+        public void ShouldBeAbleToConsumeEvents()
+        {
+            // Arrange
+            var configurationMock = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
+
+            configurationMock.SetupGet(c => c["RabbitMQ:HostName"]).Returns("localhost");
+            configurationMock.SetupGet(c => c["RabbitMQ:Port"]).Returns("5672");
+            configurationMock.SetupGet(c => c["RabbitMQ:UserName"]).Returns("guest");
+            configurationMock.SetupGet(c => c["RabbitMQ:Password"]).Returns("guest");
+
+            var factoryMock = new Mock<IQueueFactory>();
+            factoryMock.Setup(f => f.getConnection());
+            factoryMock.Setup(f => f.getChannel());
+            factoryMock.Setup(f => f.ConsumeAsync(MockProductionMessageAsync));
+
         }
 
         [Test]

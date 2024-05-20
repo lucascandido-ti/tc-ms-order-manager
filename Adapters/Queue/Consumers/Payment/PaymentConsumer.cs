@@ -1,19 +1,17 @@
 ﻿
 using Application.Payment.Command;
 using Application.Payment.Dto;
+using Domain.Queue.Ports;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Queue.Factories;
 using Queue.Utils;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
 
 namespace Queue.Consumers.Payment
 {
-    public class PaymentConsumer : BackgroundService
+    public class PaymentConsumer : BackgroundService, IPaymentCustomer
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly QueueFactory _queueInstanse;
@@ -31,7 +29,7 @@ namespace Queue.Consumers.Payment
         }
 
 
-        private async Task ProcessPaymentMessageAsync(string message)
+        public async Task ProcessPaymentMessageAsync(string message)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
