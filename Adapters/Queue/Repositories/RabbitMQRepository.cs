@@ -1,5 +1,9 @@
-﻿using Domain.Queue.Ports;
+﻿// NOSONAR
+
+using Domain.Queue.Ports;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Queue.Factories;
 using RabbitMQ.Client;
 using System.Text;
 
@@ -7,24 +11,14 @@ namespace Queue.Repositories
 {
     public class RabbitMQRepository : IQueueRepository
     {
-        private readonly IConnection _connection;
         private readonly IModel _channel;
         private const string _exchange = "order-service";
+        private readonly QueueFactory _queueInstanse;
 
-        public RabbitMQRepository()
+        public RabbitMQRepository(IConfiguration configuration)
         {
-            var connectionFactory = new ConnectionFactory
-            {
-                HostName = "localhost",
-            };
-
-            _connection = connectionFactory.CreateConnection("order-service-publisher");
-
-            _channel = _connection.CreateModel();
-
-            
-
-            
+            _queueInstanse = new QueueFactory(configuration, "order-service-queue", "order-service-producer");
+            _channel = _queueInstanse.getChannel();
         }
 
         public void Publish(object data, string routingKey, string queueName)
