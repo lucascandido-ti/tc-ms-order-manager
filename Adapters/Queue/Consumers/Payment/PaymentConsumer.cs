@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Queue.Factories;
 using Queue.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -15,44 +16,18 @@ namespace Queue.Consumers.Payment
     public class PaymentConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IConnection _connection;
-        private readonly IModel _channel;
-        private const string QueueName = "payment-service-queue";
+        private readonly QueueFactory _queueInstanse;
 
 
         public PaymentConsumer(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            var rabbitMQConfig = configuration.GetSection("RabbitMQ");
-            var hostName = rabbitMQConfig.GetValue<string>("HostName");
-            var port = rabbitMQConfig.GetValue<int>("Port");
-            var username = rabbitMQConfig.GetValue<string>("UserName");
-            var password = rabbitMQConfig.GetValue<string>("Password");
-
-            var connectionFactory = new ConnectionFactory
-            {
-                HostName = hostName,
-                Port = port,
-                UserName = username,
-                Password = password
-            };
-
             _serviceProvider = serviceProvider;
-            _connection = connectionFactory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            _queueInstanse = new QueueFactory(configuration, "payment-service-queue", "payment-consumer");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += async (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                await ProcessPaymentMessageAsync(message);
-            };
-            _channel.BasicConsume(queue: QueueName, autoAck: true, consumer: consumer);
-            return Task.CompletedTask;
+            return _queueInstanse.ConsumeAsync(ProcessPaymentMessageAsync);
         }
 
 
