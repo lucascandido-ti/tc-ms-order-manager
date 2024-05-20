@@ -1,9 +1,8 @@
-name: Tech Challenge - Order Manager
+name: Tech Challenge - Order Manager - CI
 
 on:
   push:
-    branches:
-      - master
+  pull_request:
 
 jobs:
   build:
@@ -23,8 +22,7 @@ jobs:
 
       - name: Build
         run: dotnet build --no-restore --output out/
-        # Save the build artifacts for the test job
-        # In this case we are assuming all build outputs are in the 'out' directory
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
@@ -52,3 +50,9 @@ jobs:
 
       - name: Test Module Core/Application
         run: dotnet test ./Tests/Core/ApplicationTests/
+
+      - name: SonarCloud Scanner
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
