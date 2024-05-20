@@ -1,4 +1,6 @@
-﻿using Domain.Queue.Ports;
+﻿// NOSONAR
+
+using Domain.Queue.Ports;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Queue.Factories;

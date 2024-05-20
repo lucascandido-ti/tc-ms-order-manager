@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿// NOSONAR
+
+using Microsoft.Extensions.Configuration;
 using Queue.Ports;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

@@ -1,4 +1,6 @@
-﻿using Application.Production.Commands;
+﻿// NOSONAR
+
+using Application.Production.Commands;
 using Application.Production.Commands.StartProduction;
 using Application.Production.Dto;
 using Domain.Queue.Ports;

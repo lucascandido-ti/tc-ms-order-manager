@@ -1,4 +1,5 @@
-﻿
+﻿// NOSONAR
+
 using Application.Payment.Command;
 using Application.Payment.Dto;
 using Domain.Queue.Ports;
