@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-ordermanager-deployment
+spec:
+  template:
+    metadata:
+      name: ms-ordermanager-deployment
+      labels:
+        app: ms-ordermanager-deployment
+    spec:
+      containers:
+        - name: ms-ordermanager-deployment
+          image: lucascandido/ts-ms-ordermanager:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              memory: 2Gi
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-ordermanager-deployment

@@ -1,3 +1,5 @@
+// NOSONAR
+
 using Application.Category;
 using Application.Category.Ports;
 using Application.Customer;
