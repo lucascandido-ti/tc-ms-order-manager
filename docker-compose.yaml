@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: ordermanager
+    environment:
+      POSTGRES_DB: ordermanager
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker/dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:
+    driver: local
