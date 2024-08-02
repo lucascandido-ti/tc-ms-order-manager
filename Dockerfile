@@ -1,17 +1,18 @@
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /app
-EXPOSE 5000
 
-# Copy everything
+# Copiar tudo
 COPY . ./
-# Restore as distinct layers
+# Restaurar dependências
 WORKDIR /app/Consumers/API
 RUN dotnet restore
-# Build and publish a release
+
+# Build e publicar uma versão de release
 RUN dotnet publish -c Release -o out
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/sdk:7.0 as final-env
+# Imagem de runtime
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app/Consumers/API
 COPY --from=build-env /app/Consumers/API/out .
 EXPOSE 5000

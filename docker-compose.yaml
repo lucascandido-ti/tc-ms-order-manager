@@ -10,7 +10,56 @@ services:
       - "5432:5432"
     volumes:
       - ./.docker/dbdata:/var/lib/postgresql/data
+    profiles: [dev]
+    networks:
+      - order
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-tech
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    profiles: [dev]
+    networks:
+      - ms-tech
+
+  app:
+    build: .
+    container_name: app-ordermanager
+    profiles: [build]
+    ports:
+      - 5000:5000
+    networks:
+      - order
+      - ms-tech
+
+  zap:
+    image: zaproxy/zap-stable
+    container_name: zap
+    profiles: [scan]
+    networks:
+      - ms-tech
+    volumes:
+      - ./.docker/zap:/zap/wrk:rw
+    entrypoint:
+      [
+        "zap-api-scan.py",
+        "-t",
+        "http://app-ordermanager:5000/swagger/v1/swagger.json",
+        "-f",
+        "openapi",
+        "-r",
+        "report.html",
+      ]
+
+networks:
+  ms-tech:
+  order:
 
 volumes:
+  zap:
   dbdata:
-    driver: local
