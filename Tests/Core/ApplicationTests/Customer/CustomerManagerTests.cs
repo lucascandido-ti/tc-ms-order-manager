@@ -26,6 +26,11 @@ namespace ApplicationTests.Customer
             return Task.FromResult(customerEntities);
         }
 
+        public Task<Entities.Customer> DeleteCustomer(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Entities.Customer> Get(int id)
         {
             var customerDTO = new CustomerDTO
