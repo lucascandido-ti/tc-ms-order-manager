@@ -6,6 +6,7 @@ using Application.Customer.Ports;
 using Domain.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Controllers
 {
@@ -63,6 +64,22 @@ namespace API.Controllers
             if (res.Success) return Created("", res.Data);
 
             return NotFound(res);
+        }
+
+        [HttpDelete]
+        [Route("{customerId}")]
+        public async Task<ActionResult<CustomerDTO>> Delete(int customerId)
+        {
+            var command = new DeletePersonalDataCommand
+            {
+                Id = customerId
+            };
+
+            var res = await _mediator.Send(command);
+
+            if (res.Success) return Created("", res.Data);
+
+            return BadRequest(500);
         }
 
         [HttpGet]

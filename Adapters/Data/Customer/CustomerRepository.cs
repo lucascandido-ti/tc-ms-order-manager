@@ -1,4 +1,5 @@
 ﻿using Domain.Customer.Ports;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Entities = Domain.Entities;
 
@@ -17,6 +18,20 @@ namespace Data.Customer
         public async Task<Entities.Customer> CreateCustomer(Entities.Customer customer)
         {
             _dbContext.Customers.Add(customer);
+            await _dbContext.SaveChangesAsync();
+            return customer;
+        }
+
+        public async Task<Entities.Customer> DeleteCustomer(int id)
+        {
+            var customer = await _dbContext.Customers.FindAsync(id);
+            if (customer == null)
+            {
+                return null;
+            }
+
+            _dbContext.Customers.Remove(customer);
+
             await _dbContext.SaveChangesAsync();
             return customer;
         }

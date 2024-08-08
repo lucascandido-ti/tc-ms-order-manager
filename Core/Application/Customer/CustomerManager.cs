@@ -64,6 +64,31 @@ namespace Application.Customer
             }
         }
 
+        public async Task<CustomerResponse> DeleteCustomer(int id)
+        {
+            try
+            {
+                var customer = await _customerRepository.DeleteCustomer(id);
+
+                var customerDTO = CustomerDTO.MapToDTO(customer);
+
+                return new CustomerResponse
+                {
+                    Success = true,
+                    Data = customerDTO,
+                };
+            }
+            catch (NameRequiredException)
+            {
+                return new CustomerResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.CUSTOMER_NAME_REQUIRED,
+                    Message = "Name is a required information"
+                };
+            }
+        }
+
         public async Task<CustomerResponse> GetCustomer(int id)
         {
             var customer = await _customerRepository.Get(id);

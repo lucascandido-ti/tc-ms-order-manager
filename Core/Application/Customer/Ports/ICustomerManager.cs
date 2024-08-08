@@ -7,6 +7,7 @@ namespace Application.Customer.Ports
     public interface ICustomerManager
     {
         Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request);
+        Task<CustomerResponse> DeleteCustomer(int id);
         Task<CustomerResponse> GetCustomer(int id);
         Task<List<CustomerDTO>> GetCustomers();
     }
